@@ -2,6 +2,8 @@
   "name": "appwrite-functions",
   "version": "1.0.0",
   "dependencies": {
-    "node-appwrite": "^26.0.0"
+    "node-appwrite": "^26.0.0",
+    "pdf-parse": "^1.1.1",
+    "tesseract.js": "^5.1.1"
   }
 }

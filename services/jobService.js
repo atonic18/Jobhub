@@ -1,12 +1,8 @@
 import { ID, Query, Permission, Role } from 'react-native-appwrite';
 import { databases, functions } from './appwrite';
-import {
-  FREE_TIER_ACCEPTED_LIMIT,
-  FREE_TIER_ACTIVE_JOB_LIMIT,
-  FREE_TIER_PARTICIPANT_LIMIT,
-  getUserTier,
-} from '../utils/jobUtils';
+import { APPLICATION_STATUSES, toSkillArray } from '../utils/jobUtils';
 import { fileService } from './fileService';
+import { documentService } from './documentService';
 import { notificationService } from './notificationService';
 
 const DATABASE_ID = 'jobhub_db';
@@ -17,15 +13,6 @@ const getOwnerPermissions = (userId) => [
   Permission.read(Role.user(userId)),
   Permission.update(Role.user(userId)),
   Permission.delete(Role.user(userId)),
-];
-
-const getAuthenticatedReadPermissions = () => [
-  Permission.read(Role.users()),
-];
-
-const getAuthenticatedCollaborationPermissions = () => [
-  Permission.read(Role.users()),
-  Permission.update(Role.users()),
 ];
 
 const isAuthorizationError = (error) => {
@@ -41,6 +28,9 @@ const uniqueDocuments = (documents) => {
   return Array.from(map.values());
 };
 
+const isAcceptedLikeStatus = (status) =>
+  status === APPLICATION_STATUSES.ACCEPTED || status === APPLICATION_STATUSES.INTERVIEW_SCHEDULED;
+
 const getApplicationCountsByJob = async () => {
   try {
     const response = await databases.listDocuments(DATABASE_ID, 'applications', [Query.limit(100)]);
@@ -48,7 +38,7 @@ const getApplicationCountsByJob = async () => {
       const jobId = application.job_id;
       if (!counts[jobId]) counts[jobId] = { applicantCount: 0, acceptedCount: 0 };
       counts[jobId].applicantCount += 1;
-      if (application.status === 'accepted') counts[jobId].acceptedCount += 1;
+      if (isAcceptedLikeStatus(application.status)) counts[jobId].acceptedCount += 1;
       return counts;
     }, {});
   } catch (error) {
@@ -191,6 +181,39 @@ const executeJobPostedNotificationFunction = async (job) => {
   return body;
 };
 
+const executeApplicationSubmittedFunction = async (application) => {
+  const execution = await functions.createExecution(
+    JOBHUB_ROUTER_FUNCTION_ID,
+    JSON.stringify(application),
+    false
+  );
+  const body = parseFunctionResponse(execution);
+  if (body?.success === false || body?.error) {
+    throw new Error(body.error || 'Could not process this application.');
+  }
+  return body;
+};
+
+const createAutomaticMessage = async (employerId, jobId, jobData) => {
+  const messageParts = [
+    jobData.acceptance_message,
+    jobData.interview_instructions ? `Interview instructions: ${jobData.interview_instructions}` : '',
+  ].map((item) => String(item || '').trim()).filter(Boolean);
+
+  if (messageParts.length === 0 && !jobData.acceptance_message_attachments?.length) return null;
+
+  return await databases.createDocument(DATABASE_ID, 'automatic_messages', ID.unique(), {
+    job_id: jobId,
+    employer_id: employerId,
+    message_text: messageParts.join('\n\n'),
+    attachments: jobData.acceptance_message_attachments || [],
+  }, [
+    Permission.read(Role.user(employerId)),
+    Permission.update(Role.user(employerId)),
+    Permission.delete(Role.user(employerId)),
+  ]);
+};
+
 export const jobService = {
   // Get all active jobs
   getJobs: async (filters = []) => {
@@ -249,47 +272,54 @@ export const jobService = {
     };
   },
 
-  getFreeTierLimits: () => ({
-    maxActiveJobs: FREE_TIER_ACTIVE_JOB_LIMIT,
-    maxParticipants: FREE_TIER_PARTICIPANT_LIMIT,
-  }),
-
   // Create new job (Employer)
   createJob: async (employerId, jobData) => {
-    const employerJobs = await jobService.getEmployerJobs(employerId, { includeClosed: false });
-    const activeJobs = employerJobs.documents.filter((job) => job.is_active !== false);
-    if (activeJobs.length >= FREE_TIER_ACTIVE_JOB_LIMIT) {
-      throw new Error(`Free tier employers can have up to ${FREE_TIER_ACTIVE_JOB_LIMIT} active jobs at the same time.`);
-    }
-
     const participantsNeeded = Math.max(1, Number(jobData.participants_needed || 1));
-    if (participantsNeeded > FREE_TIER_PARTICIPANT_LIMIT) {
-      throw new Error(`Free tier employers can request up to ${FREE_TIER_PARTICIPANT_LIMIT} participants per job.`);
-    }
-
     const jobId = ID.unique();
     const permissions = [
       Permission.read(Role.users()), // Authenticated users can read jobs
       Permission.update(Role.user(employerId)),
       Permission.delete(Role.user(employerId)),
     ];
+    const requiredSkills = toSkillArray([
+      ...(Array.isArray(jobData.required_skills) ? jobData.required_skills : toSkillArray(jobData.required_skills || '')),
+      ...toSkillArray(jobData.auto_accept_criteria || ''),
+    ]);
+    const requirements = [
+      jobData.requirements,
+      jobData.auto_accept_criteria ? `Auto-accept criteria: ${jobData.auto_accept_criteria}` : '',
+    ].map((item) => String(item || '').trim()).filter(Boolean).join('\n\n');
+
     const created = await databases.createDocument(DATABASE_ID, 'job_postings', jobId, {
       job_id: jobId,
       user_id: employerId,
       category_id: jobData.category_id || jobData.category || 'general',
       employer_id: employerId,
-      ...jobData,
+      title: jobData.title || '',
+      description: jobData.description || '',
+      job_type: jobData.job_type || 'full-time',
+      location: jobData.location || '',
+      work_mode: jobData.work_mode || 'remote',
+      requirements,
       salary_min: Number.isFinite(Number(jobData.salary_min)) ? Number(jobData.salary_min) : 0,
       salary_max: Number.isFinite(Number(jobData.salary_max)) ? Number(jobData.salary_max) : 0,
       participants_needed: Number.isFinite(participantsNeeded) ? participantsNeeded : 1,
-      required_skills: jobData.required_skills || [],
+      required_skills: requiredSkills,
       required_documents: jobData.required_documents || [],
+      interview_required: jobData.interview_required === true,
+      interview_type: jobData.interview_required ? jobData.interview_type || 'physical' : 'none',
+      interview_date: jobData.interview_date || '',
+      interview_time: jobData.interview_time || '',
+      interview_location: jobData.interview_location || '',
+      auto_accept_enabled: jobData.auto_accept_enabled === true,
       applicant_count: 0,
       accepted_count: 0,
-      max_accepted_count: FREE_TIER_ACCEPTED_LIMIT,
       is_active: true,
-      is_premium: false,
     }, permissions);
+
+    await createAutomaticMessage(employerId, created.$id, jobData).catch((error) =>
+      console.error('Failed to save automatic message:', error.message)
+    );
 
     await notificationService.createNotification({
       userId: employerId,
@@ -395,13 +425,19 @@ export const jobService = {
     const applicationId = ID.unique();
     const jobOwnerId = employerId || '';
     const permissions = [
-      ...getAuthenticatedReadPermissions(),
       Permission.read(Role.user(userId)),
       Permission.update(Role.user(userId)),
       Permission.delete(Role.user(userId)),
+      ...(jobOwnerId ? [Permission.read(Role.user(jobOwnerId))] : []),
     ];
-    const appliedDocuments = uploadedDocuments.map((document) =>
-      typeof document === 'string' ? document : fileService.serializeFileReference(document)
+    const selectedDocuments = uploadedDocuments.map((document) =>
+      typeof document === 'string' ? fileService.parseFileReference(document) : document
+    ).filter(Boolean);
+    if (selectedDocuments.length > 0 && jobOwnerId) {
+      await documentService.grantEmployerAccess(selectedDocuments, userId, jobOwnerId);
+    }
+    const appliedDocuments = selectedDocuments.map((document) =>
+      documentService.serializeForApplication(document)
     );
     const created = await databases.createDocument(DATABASE_ID, 'applications', applicationId, {
       application_id: applicationId,
@@ -412,34 +448,46 @@ export const jobService = {
       resume_url: resumeUrl,
       documents: appliedDocuments.length > 0 ? appliedDocuments : (resumeUrl ? [resumeUrl] : []),
       applied_documents: appliedDocuments,
-      status: 'pending',
+      status: APPLICATION_STATUSES.PENDING,
+      match_score: 0,
+      match_reasons: [],
+      auto_accept_audit: '',
+      auto_decision_at: '',
+      interview_id: '',
     }, permissions);
 
-    // Employer notifications and applicant count updates are handled by the
-    // Appwrite event function with server permissions.
+    const processed = await executeApplicationSubmittedFunction(created).catch((error) => {
+      console.error('Application side effects failed:', error.message);
+      return null;
+    });
 
-    return created;
+    await notificationService.createNotification({
+      userId,
+      title: 'Application submitted',
+      message: 'Your application was submitted successfully.',
+      notificationType: 'application_submitted',
+      relatedId: created.$id,
+    }).catch((error) => console.error('Failed to create application submitted notification:', error.message));
+
+    return processed?.application || created;
   },
 
   updateApplicationStatus: async ({ application, job, status, employerUser }) => {
     if (!application?.$id || !job?.$id) throw new Error('Application and job are required.');
     const nextStatus = String(status || '').toLowerCase();
-    if (!['accepted', 'rejected', 'pending', 'viewed'].includes(nextStatus)) {
+    if (![
+      APPLICATION_STATUSES.ACCEPTED,
+      APPLICATION_STATUSES.REJECTED,
+      APPLICATION_STATUSES.PENDING,
+      APPLICATION_STATUSES.NEEDS_REVIEW,
+      APPLICATION_STATUSES.INTERVIEW_SCHEDULED,
+    ].includes(nextStatus)) {
       throw new Error('Invalid application status.');
     }
     const employerId = job.employer_id || job.user_id;
     const callerId = employerUser?.user_id || employerUser?.$id || employerUser?.id;
     if (employerId && callerId && employerId !== callerId) {
       throw new Error('Only the employer who posted this job can update applicants.');
-    }
-
-    if (nextStatus === 'accepted' && application.status !== 'accepted') {
-      const response = await jobService.getApplications('job', job.$id);
-      const acceptedCount = response.documents.filter((item) => item.status === 'accepted').length;
-      const tier = getUserTier(employerUser);
-      if (tier !== 'premium' && acceptedCount >= FREE_TIER_ACCEPTED_LIMIT) {
-        throw new Error(`Free tier employers can accept up to ${FREE_TIER_ACCEPTED_LIMIT} applicants for one job.`);
-      }
     }
 
     const functionResponse = await executeApplicationStatusFunction({
@@ -452,7 +500,7 @@ export const jobService = {
     try {
       const response = await jobService.getApplications('job', job.$id);
       const acceptedCount = response.documents.filter((item) =>
-        item.$id === updated.$id ? nextStatus === 'accepted' : item.status === 'accepted'
+        item.$id === updated.$id ? isAcceptedLikeStatus(nextStatus) : isAcceptedLikeStatus(item.status)
       ).length;
       await jobService.updateJob(job.$id, {
         accepted_count: acceptedCount,
@@ -469,6 +517,10 @@ export const jobService = {
   getApplications: async (filterType, id) => {
     const query = filterType === 'user' ? Query.equal('user_id', id) : Query.equal('job_id', id);
     return await databases.listDocuments(DATABASE_ID, 'applications', [query, Query.orderDesc('$createdAt')]);
+  },
+
+  getApplication: async (applicationId) => {
+    return await databases.getDocument(DATABASE_ID, 'applications', applicationId);
   },
 
   removeApplicationFromAppliedList: async (applicationId, userId) => {

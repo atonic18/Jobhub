@@ -1,13 +1,23 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Modal, TextInput } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Modal, TextInput, Linking } from 'react-native';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
-import * as DocumentPicker from 'expo-document-picker';
 import { Banknote, Bookmark, BookmarkCheck, Calendar, ChevronLeft, FileText, MapPin, Briefcase, Paperclip, X } from 'lucide-react-native';
 import { Button } from '../../components/ui/Button';
 import { jobService } from '../../services/jobService';
 import { fileService } from '../../services/fileService';
+import { documentService } from '../../services/documentService';
 import { useAuth } from '../../context/AuthContext';
-import { getApplicationStatusLabel, getCompanyLabel, getDepartmentForJob, getSalaryLabel, getUserId } from '../../utils/jobUtils';
+import {
+  APPLICATION_STATUSES,
+  documentMatchesRequirement,
+  getApplicationStatusLabel,
+  getCompanyLabel,
+  getDepartmentForJob,
+  getDocumentTypeLabel,
+  getMissingDocumentRequirements,
+  getSalaryLabel,
+  getUserId,
+} from '../../utils/jobUtils';
 
 export default function JobDetails() {
   const { id } = useLocalSearchParams();
@@ -18,8 +28,9 @@ export default function JobDetails() {
   const [saved, setSaved] = useState(false);
   const [applyVisible, setApplyVisible] = useState(false);
   const [coverLetter, setCoverLetter] = useState('I am interested in this position.');
-  const [uploadedDocuments, setUploadedDocuments] = useState([]);
-  const [uploading, setUploading] = useState(false);
+  const [employeeDocuments, setEmployeeDocuments] = useState([]);
+  const [selectedDocumentIds, setSelectedDocumentIds] = useState(new Set());
+  const [application, setApplication] = useState(null);
   const router = useRouter();
   const { user } = useAuth();
   const userId = getUserId(user);
@@ -28,6 +39,12 @@ export default function JobDetails() {
     try {
       const response = await jobService.getJobWithApplicationStatus(id, userId);
       setJob(response);
+      if (response.applicationId) {
+        const applicationResponse = await jobService.getApplication(response.applicationId).catch(() => null);
+        setApplication(applicationResponse);
+      } else {
+        setApplication(null);
+      }
     } catch (error) {
       console.error(error);
       Alert.alert('Error', 'Could not load job details');
@@ -58,28 +75,43 @@ export default function JobDetails() {
 
   const requiredDocuments = Array.isArray(job?.required_documents) ? job.required_documents.filter(Boolean) : [];
 
-  const pickDocument = async () => {
+  const loadEmployeeDocuments = async () => {
+    const response = await documentService.getDocuments(userId);
+    return response.documents || [];
+  };
+
+  const openApplyModal = async () => {
     if (!userId) {
-      Alert.alert('Login required', 'Please login before uploading documents.');
+      Alert.alert('Login required', 'Please login before applying.');
       return;
     }
 
     try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: ['image/*', 'application/pdf'],
-        multiple: false,
-        copyToCacheDirectory: true,
-      });
-
-      if (result.canceled || !result.assets?.[0]) return;
-
-      setUploading(true);
-      const uploaded = await fileService.uploadPickedFile(result.assets[0], userId);
-      setUploadedDocuments((current) => [...current, uploaded]);
+      const documents = await loadEmployeeDocuments();
+      setEmployeeDocuments(documents);
+      const missing = getMissingDocumentRequirements(documents, requiredDocuments);
+      if (missing.length > 0) {
+        Alert.alert(
+          'Documents required',
+          `Please upload these documents first: ${missing.join(', ')}`,
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Upload Documents', onPress: () => router.push('/(profile)/edit-profile') },
+          ]
+        );
+        return;
+      }
+      const defaultSelected = documents
+        .filter((document) =>
+          requiredDocuments.length > 0
+            ? requiredDocuments.some((requirement) => documentMatchesRequirement(document, requirement))
+            : false
+        )
+        .map((document) => document.$id);
+      setSelectedDocumentIds(new Set(defaultSelected));
+      setApplyVisible(true);
     } catch (error) {
-      Alert.alert('Upload failed', error.message || 'Could not upload this file.');
-    } finally {
-      setUploading(false);
+      Alert.alert('Documents', error.message || 'Could not load your documents.');
     }
   };
 
@@ -88,20 +120,24 @@ export default function JobDetails() {
       Alert.alert('Error', 'You must be logged in to apply');
       return;
     }
-    if (requiredDocuments.length > 0 && uploadedDocuments.length === 0) {
-      Alert.alert('Documents required', 'Please upload the required documents before applying.');
+    const selectedDocuments = employeeDocuments.filter((document) => selectedDocumentIds.has(document.$id));
+    const missing = getMissingDocumentRequirements(selectedDocuments, requiredDocuments);
+    if (missing.length > 0) {
+      Alert.alert('Documents required', `Select documents that satisfy: ${missing.join(', ')}`);
       return;
     }
     setApplying(true);
     try {
-      await jobService.applyForJob(userId, id, coverLetter.trim(), null, job.employer_id || job.user_id, uploadedDocuments);
+      const createdApplication = await jobService.applyForJob(userId, id, coverLetter.trim(), null, job.employer_id || job.user_id, selectedDocuments);
       setJob((current) => ({
         ...current,
         hasApplied: true,
-        applicationStatus: 'pending',
+        applicationId: createdApplication.$id,
+        applicationStatus: createdApplication.status || APPLICATION_STATUSES.PENDING,
         applicant_count: Number(current?.applicant_count || 0) + 1,
       }));
-      Alert.alert('Success', 'Application submitted successfully!');
+      setApplication(createdApplication);
+      Alert.alert('Application submitted', `Current status: ${getApplicationStatusLabel(createdApplication.status || APPLICATION_STATUSES.PENDING)}.`);
       setApplyVisible(false);
       router.push('/(home)/applied');
     } catch (error) {
@@ -133,6 +169,16 @@ export default function JobDetails() {
     }
   };
 
+  const openAttachment = async (attachmentValue) => {
+    const url = fileService.getOpenUrl(attachmentValue);
+    if (!url) return;
+    try {
+      await Linking.openURL(url);
+    } catch (error) {
+      Alert.alert('Attachment', 'Could not open this attachment.');
+    }
+  };
+
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center bg-background dark:bg-darkBg">
@@ -144,7 +190,16 @@ export default function JobDetails() {
   if (!job) return null;
   const isOwnJob = userId && userId === (job.employer_id || job.user_id);
   const hasApplied = job.hasApplied || Boolean(job.applicationStatus);
-  const applicationLabel = getApplicationStatusLabel(job.applicationStatus || 'pending');
+  const currentStatus = application?.status || job.applicationStatus || APPLICATION_STATUSES.PENDING;
+  const applicationLabel = getApplicationStatusLabel(currentStatus);
+  const canSeeAcceptedDetails = [
+    APPLICATION_STATUSES.ACCEPTED,
+    APPLICATION_STATUSES.INTERVIEW_SCHEDULED,
+  ].includes(currentStatus);
+  const acceptanceMessage = application?.acceptance_message || job.acceptance_message || '';
+  const acceptanceAttachments = application?.acceptance_message_attachments?.length
+    ? application.acceptance_message_attachments
+    : job.acceptance_message_attachments || [];
   const actionTitle = isOwnJob ? 'Posted by you' : hasApplied ? applicationLabel : 'Apply Now';
 
   return (
@@ -219,12 +274,61 @@ export default function JobDetails() {
             ))}
           </View>
         ) : null}
+
+        {hasApplied ? (
+          <View className="mb-10">
+            <Text className="text-text dark:text-darkText text-xl font-bold mb-3">Application Status</Text>
+            <View className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-3xl p-5">
+              <View className="self-start bg-blue-100 dark:bg-darkSurface2 px-3 py-1 rounded-full mb-3">
+                <Text className="text-primary text-xs font-bold">{applicationLabel}</Text>
+              </View>
+              {application?.auto_accept_audit ? (
+                <Text className="text-secondaryText dark:text-darkMuted leading-5 mb-3">{application.auto_accept_audit}</Text>
+              ) : null}
+              {canSeeAcceptedDetails && acceptanceMessage ? (
+                <>
+                  <Text className="text-text dark:text-darkText font-bold mb-2">Acceptance Message</Text>
+                  <Text className="text-secondaryText dark:text-darkMuted leading-5 mb-3">{acceptanceMessage}</Text>
+                </>
+              ) : null}
+              {canSeeAcceptedDetails && acceptanceAttachments.length > 0 ? (
+                <View className="mb-3">
+                  <Text className="text-text dark:text-darkText font-bold mb-2">Message Attachments</Text>
+                  {acceptanceAttachments.map((attachmentValue, index) => {
+                    const attachment = fileService.parseFileReference(attachmentValue);
+                    return (
+                      <TouchableOpacity
+                        key={`${attachment?.fileId || index}`}
+                        onPress={() => openAttachment(attachmentValue)}
+                        className="bg-gray-50 dark:bg-darkSurface2 rounded-2xl p-3 mb-2 flex-row items-center"
+                      >
+                        <FileText size={18} color="#2563EB" />
+                        <Text className="text-secondaryText dark:text-darkMuted ml-3 flex-1" numberOfLines={1}>
+                          {attachment?.name || `Attachment ${index + 1}`}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              ) : null}
+              {canSeeAcceptedDetails && job.interview_required ? (
+                <View>
+                  <Text className="text-text dark:text-darkText font-bold mb-2">Interview Details</Text>
+                  <Text className="text-secondaryText dark:text-darkMuted">Type: {job.interview_type || 'Interview'}</Text>
+                  <Text className="text-secondaryText dark:text-darkMuted mt-1">Date and time: {[job.interview_date, job.interview_time].filter(Boolean).join(' ') || 'To be confirmed'}</Text>
+                  {job.interview_location ? <Text className="text-secondaryText dark:text-darkMuted mt-1">Venue or link: {job.interview_location}</Text> : null}
+                  {job.interview_instructions ? <Text className="text-secondaryText dark:text-darkMuted mt-1">Instructions: {job.interview_instructions}</Text> : null}
+                </View>
+              ) : null}
+            </View>
+          </View>
+        ) : null}
       </ScrollView>
 
       <View className="p-6 bg-white dark:bg-darkSurface border-t border-gray-100 dark:border-darkBorder">
         <Button
           title={actionTitle}
-          onPress={() => !isOwnJob && !hasApplied && setApplyVisible(true)}
+          onPress={() => !isOwnJob && !hasApplied && openApplyModal()}
           disabled={isOwnJob || hasApplied}
         />
       </View>
@@ -260,21 +364,43 @@ export default function JobDetails() {
               className="min-h-[110px] bg-gray-50 dark:bg-darkSurface2 border border-gray-100 dark:border-darkBorder rounded-2xl p-4 text-text dark:text-darkText mb-4"
             />
 
-            <TouchableOpacity
-              onPress={pickDocument}
-              disabled={uploading}
-              className={`border border-dashed border-primary rounded-2xl p-4 flex-row items-center justify-center mb-4 ${uploading ? 'opacity-60' : ''}`}
-            >
-              <Paperclip size={18} color="#2563EB" />
-              <Text className="text-primary font-bold ml-2">{uploading ? 'Uploading...' : 'Upload Image or PDF'}</Text>
-            </TouchableOpacity>
-
-            {uploadedDocuments.map((document) => (
-              <View key={document.fileId} className="bg-gray-50 dark:bg-darkSurface2 rounded-2xl p-3 mb-2 flex-row items-center">
-                <FileText size={18} color="#2563EB" />
-                <Text className="text-secondaryText dark:text-darkMuted ml-3 flex-1" numberOfLines={1}>{document.name}</Text>
+            <View className="mb-4">
+              <View className="flex-row items-center justify-between mb-2">
+                <Text className="text-text dark:text-darkText font-bold">Documents to Share</Text>
+                <TouchableOpacity onPress={() => router.push('/(profile)/edit-profile')} className="flex-row items-center">
+                  <Paperclip size={16} color="#2563EB" />
+                  <Text className="text-primary font-bold ml-1">Manage</Text>
+                </TouchableOpacity>
               </View>
-            ))}
+              {employeeDocuments.length === 0 ? (
+                <View className="bg-gray-50 dark:bg-darkSurface2 rounded-2xl p-4">
+                  <Text className="text-secondaryText dark:text-darkMuted">No uploaded documents. Manage your profile to add CVs or credentials.</Text>
+                </View>
+              ) : (
+                employeeDocuments.map((document) => {
+                  const selected = selectedDocumentIds.has(document.$id);
+                  return (
+                    <TouchableOpacity
+                      key={document.$id}
+                      onPress={() => {
+                        const next = new Set(selectedDocumentIds);
+                        if (selected) next.delete(document.$id);
+                        else next.add(document.$id);
+                        setSelectedDocumentIds(next);
+                      }}
+                      className={`rounded-2xl p-3 mb-2 flex-row items-center border ${selected ? 'bg-blue-50 dark:bg-darkSurface2 border-primary' : 'bg-gray-50 dark:bg-darkSurface2 border-transparent'}`}
+                    >
+                      <FileText size={18} color="#2563EB" />
+                      <View className="flex-1 ml-3">
+                        <Text className="text-text dark:text-darkText font-bold" numberOfLines={1}>{document.file_name || 'Document'}</Text>
+                        <Text className="text-secondaryText dark:text-darkMuted text-xs">{getDocumentTypeLabel(document.document_type)}</Text>
+                      </View>
+                      <View className={`w-5 h-5 rounded-full border ${selected ? 'bg-primary border-primary' : 'border-gray-300'}`} />
+                    </TouchableOpacity>
+                  );
+                })
+              )}
+            </View>
 
             <Button
               title="Submit Application"

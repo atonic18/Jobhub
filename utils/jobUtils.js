@@ -21,12 +21,30 @@ export const JOB_DEPARTMENTS = [
   },
 ];
 
-export const FREE_TIER_PARTICIPANT_LIMIT = 50;
-export const FREE_TIER_ACTIVE_JOB_LIMIT = 3;
-export const FREE_TIER_ACCEPTED_LIMIT = 5;
-export const PREMIUM_MONTHLY_PRICE_XAF = 5;
 export const APPLICATION_DOCUMENTS_BUCKET_ID = 'application_documents';
+export const EMPLOYEE_DOCUMENTS_BUCKET_ID = APPLICATION_DOCUMENTS_BUCKET_ID;
 export const PROFILE_PICTURES_BUCKET_ID = APPLICATION_DOCUMENTS_BUCKET_ID;
+export const MESSAGE_ATTACHMENTS_BUCKET_ID = APPLICATION_DOCUMENTS_BUCKET_ID;
+
+export const APPLICATION_STATUSES = {
+  PENDING: 'pending',
+  ACCEPTED: 'accepted',
+  NEEDS_REVIEW: 'needs_review',
+  INTERVIEW_SCHEDULED: 'interview_scheduled',
+  REJECTED: 'rejected',
+};
+
+export const EMPLOYER_BUSINESS_TYPES = [
+  { value: 'corporate', label: 'Corporate Business' },
+  { value: 'small_scale', label: 'Small Scale Business' },
+];
+
+export const EMPLOYEE_DOCUMENT_TYPES = [
+  { value: 'cv', label: 'CV' },
+  { value: 'certificate', label: 'Certificate' },
+  { value: 'identity', label: 'ID or Credential' },
+  { value: 'supporting', label: 'Supporting Document' },
+];
 
 const compactText = (value) => String(value || '').trim();
 const normalizeText = (value) =>
@@ -56,10 +74,7 @@ export const toSkillArray = (skills) => {
 export const getUserSkills = (user, profile) =>
   toSkillArray(profile?.skills || user?.skills || user?.prefs?.skills || []);
 
-export const getUserTier = (user) => {
-  const tier = String(user?.tier || user?.prefs?.tier || '').toLowerCase();
-  return tier === 'premium' ? 'premium' : 'free';
-};
+export const getUserTier = () => 'standard';
 
 export const getUserId = (user) => user?.user_id || user?.$id || user?.id;
 
@@ -209,8 +224,52 @@ export const getApplicationStatusLabel = (status) => {
   if (!status) return 'Pending';
   if (status === 'rejected') return 'Declined';
   if (status === 'declined') return 'Declined';
+  if (status === 'needs_review') return 'Needs Review';
+  if (status === 'interview_scheduled') return 'Interview Scheduled';
   return status.charAt(0).toUpperCase() + status.slice(1);
 };
+
+export const getBusinessTypeLabel = (value) =>
+  EMPLOYER_BUSINESS_TYPES.find((type) => type.value === value)?.label || 'Corporate Business';
+
+export const getDocumentTypeLabel = (value) =>
+  EMPLOYEE_DOCUMENT_TYPES.find((type) => type.value === value)?.label || 'Supporting Document';
+
+export const documentMatchesRequirement = (document, requirement) => {
+  const normalizedRequirement = normalizeText(requirement);
+  if (!normalizedRequirement) return true;
+
+  const type = String(document?.document_type || document?.type || '').toLowerCase();
+  const haystack = normalizeText([
+    type,
+    document?.name,
+    document?.file_name,
+    ...(Array.isArray(document?.extracted_keywords) ? document.extracted_keywords : []),
+  ].filter(Boolean).join(' '));
+
+  if (normalizedRequirement.includes('cv') || normalizedRequirement.includes('resume')) {
+    return type === 'cv' || haystack.includes('cv') || haystack.includes('resume');
+  }
+
+  if (normalizedRequirement.includes('certificate') || normalizedRequirement.includes('certification')) {
+    return type === 'certificate' || haystack.includes('certificate') || haystack.includes('certification');
+  }
+
+  if (normalizedRequirement.includes('id') || normalizedRequirement.includes('identity') || normalizedRequirement.includes('credential')) {
+    return type === 'identity' || haystack.includes('identity') || haystack.includes('credential');
+  }
+
+  const requirementTokens = tokenizeText(normalizedRequirement);
+  const documentTokens = tokenizeText(haystack);
+  return requirementTokens.some((token) =>
+    documentTokens.some((candidate) => keywordMatches(token, candidate))
+  );
+};
+
+export const getMissingDocumentRequirements = (documents, requirements = []) =>
+  requirements.filter((requirement) =>
+    !documents.some((document) => documentMatchesRequirement(document, requirement))
+  );
 
 export const formatTimestamp = (value) => {
   if (!value) return '';

@@ -28,7 +28,6 @@ export const profileService = {
         phone: data.phone || '',
         profile_pic_url: data.profile_pic_url || fallback.profile_pic_url || '',
         type: fallback.type || 'employee',
-        tier: fallback.tier || 'free',
         is_verified: false,
       }, ownerPermissions(userId));
     }
@@ -52,6 +51,9 @@ export const profileService = {
       title: data.title || '',
       bio: data.bio || '',
       skills: Array.isArray(data.skills) ? data.skills : [],
+      experience: data.experience || '',
+      certificates: Array.isArray(data.certificates) ? data.certificates : [],
+      qualifications: data.qualifications || '',
       location: data.location || '',
       show_profile_to_employers: data.show_profile_to_employers !== false,
     }, ownerPermissions(userId));
@@ -155,6 +157,9 @@ export const profileService = {
       bio: profile?.bio || '',
       location: profile?.location || '',
       skills: Array.isArray(profile?.skills) ? profile.skills : [],
+      experience: profile?.experience || '',
+      certificates: Array.isArray(profile?.certificates) ? profile.certificates : [],
+      qualifications: profile?.qualifications || '',
     };
   },
 
@@ -177,6 +182,8 @@ export const profileService = {
       contact_phone: data.contact_phone || data.phone || '',
       location: data.location || '',
       industry: data.industry || '',
+      business_type: data.business_type || 'corporate',
+      business_type_detail: data.business_type_detail || data.business_type || '',
       description: data.description || '',
       website: data.website || '',
       is_active: true,

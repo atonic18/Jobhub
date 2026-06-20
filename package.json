@@ -8,10 +8,12 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "appwrite:migrate:fixes": "node appwrite/migrations/jobhub-fixes-2026-06-16.js",
+    "appwrite:migrate:application-upgrade": "node appwrite/migrations/jobhub-application-upgrade-2026-06-20.js",
     "appwrite:documents:public": "node appwrite/scripts/make-application-documents-public.js",
     "appwrite:deploy:router": "appwrite functions create-deployment --function-id sendMessage --code appwrite/functions --entrypoint sendMessage/index.js --commands \"npm install\" --activate true",
     "appwrite:deploy:application-status": "appwrite functions create-deployment --function-id updateApplicationStatus --code appwrite/functions --entrypoint updateApplicationStatus/index.js --commands \"npm install\" --activate true",
-    "appwrite:deploy:notifications": "npm run appwrite:deploy:router && npm run appwrite:deploy:application-status",
+    "appwrite:deploy:document-processing": "appwrite functions create-deployment --function-id processEmployeeDocument --code appwrite/functions --entrypoint processEmployeeDocument/index.js --commands \"npm install\" --activate true",
+    "appwrite:deploy:notifications": "npm run appwrite:deploy:router && npm run appwrite:deploy:application-status && npm run appwrite:deploy:document-processing",
     "web": "expo start --web"
   },
   "keywords": [],

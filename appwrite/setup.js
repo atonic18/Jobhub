@@ -61,9 +61,12 @@ async function setup() {
       { id: 'messages', name: 'Messages' },
       { id: 'notifications', name: 'Notifications' },
       { id: 'interviews', name: 'Interviews' },
-      { id: 'subscriptions', name: 'Subscriptions' },
       { id: 'reports', name: 'Reports' },
       { id: 'job_categories', name: 'Job Categories' },
+      { id: 'employee_documents', name: 'Employee Documents' },
+      { id: 'automatic_messages', name: 'Automatic Messages' },
+      { id: 'message_attachments', name: 'Message Attachments' },
+      { id: 'faq_items', name: 'FAQ Items' },
     ];
 
     const collectionPermissions = [
@@ -116,6 +119,7 @@ async function setup() {
     await createStringAttribute(DATABASE_ID, 'employer_profiles', 'company_logo_url', 500, false);
     await createStringAttribute(DATABASE_ID, 'employer_profiles', 'description', 2000, false);
     await createStringAttribute(DATABASE_ID, 'employer_profiles', 'website', 255, false);
+    await createStringAttribute(DATABASE_ID, 'employer_profiles', 'business_type_detail', 255, false);
     await createBooleanAttribute(DATABASE_ID, 'employer_profiles', 'is_active', true, true);
 
     // Job Postings
@@ -131,23 +135,38 @@ async function setup() {
     await createStringAttribute(DATABASE_ID, 'job_postings', 'location', 255, true);
     await createEnumAttribute(DATABASE_ID, 'job_postings', 'work_mode', ['remote', 'on-site', 'hybrid'], true);
     await createBooleanAttribute(DATABASE_ID, 'job_postings', 'is_active', true, true);
-    await createBooleanAttribute(DATABASE_ID, 'job_postings', 'is_premium', true, false);
     await createStringAttribute(DATABASE_ID, 'job_postings', 'requirements', 5000, false);
     await createStringAttribute(DATABASE_ID, 'job_postings', 'required_skills', 255, false, true);
     await createStringAttribute(DATABASE_ID, 'job_postings', 'required_documents', 255, false, true);
     await createIntegerAttribute(DATABASE_ID, 'job_postings', 'participants_needed', false);
     await createIntegerAttribute(DATABASE_ID, 'job_postings', 'applicant_count', false);
     await createIntegerAttribute(DATABASE_ID, 'job_postings', 'accepted_count', false);
-    await createIntegerAttribute(DATABASE_ID, 'job_postings', 'max_accepted_count', false);
+    await createBooleanAttribute(DATABASE_ID, 'job_postings', 'interview_required', false, false);
+    await createEnumAttribute(DATABASE_ID, 'job_postings', 'interview_type', ['none', 'physical', 'online', 'phone'], false);
+    await createStringAttribute(DATABASE_ID, 'job_postings', 'interview_date', 50, false);
+    await createStringAttribute(DATABASE_ID, 'job_postings', 'interview_time', 50, false);
+    await createStringAttribute(DATABASE_ID, 'job_postings', 'interview_location', 1000, false);
+    await createStringAttribute(DATABASE_ID, 'job_postings', 'interview_instructions', 5000, false);
+    await createBooleanAttribute(DATABASE_ID, 'job_postings', 'auto_accept_enabled', false, false);
+    await createStringAttribute(DATABASE_ID, 'job_postings', 'auto_accept_criteria', 5000, false);
+    await createStringAttribute(DATABASE_ID, 'job_postings', 'acceptance_message', 5000, false);
+    await createStringAttribute(DATABASE_ID, 'job_postings', 'acceptance_message_attachments', 4000, false, true);
 
     // Applications
     await createStringAttribute(DATABASE_ID, 'applications', 'job_id', 36, true);
     await createStringAttribute(DATABASE_ID, 'applications', 'user_id', 36, true);
     await createStringAttribute(DATABASE_ID, 'applications', 'employer_id', 36, false);
-    await createEnumAttribute(DATABASE_ID, 'applications', 'status', ['pending', 'shortlisted', 'accepted', 'rejected', 'viewed'], true);
+    await createEnumAttribute(DATABASE_ID, 'applications', 'status', ['pending', 'accepted', 'needs_review', 'interview_scheduled', 'rejected'], true);
     await createStringAttribute(DATABASE_ID, 'applications', 'cover_letter', 5000, false);
     await createStringAttribute(DATABASE_ID, 'applications', 'resume_url', 500, false);
     await createStringAttribute(DATABASE_ID, 'applications', 'applied_documents', 2000, false, true);
+    await createIntegerAttribute(DATABASE_ID, 'applications', 'match_score', false);
+    await createStringAttribute(DATABASE_ID, 'applications', 'match_reasons', 255, false, true);
+    await createStringAttribute(DATABASE_ID, 'applications', 'auto_accept_audit', 2000, false);
+    await createStringAttribute(DATABASE_ID, 'applications', 'auto_decision_at', 50, false);
+    await createStringAttribute(DATABASE_ID, 'applications', 'acceptance_message', 5000, false);
+    await createStringAttribute(DATABASE_ID, 'applications', 'acceptance_message_attachments', 4000, false, true);
+    await createStringAttribute(DATABASE_ID, 'applications', 'interview_id', 36, false);
 
     // Saved Jobs
     await createStringAttribute(DATABASE_ID, 'saved_jobs', 'user_id', 36, true);
@@ -178,12 +197,6 @@ async function setup() {
     await createStringAttribute(DATABASE_ID, 'interviews', 'location', 500, false); // URL or address
     await createStringAttribute(DATABASE_ID, 'interviews', 'notes', 1000, false);
 
-    // Subscriptions
-    await createStringAttribute(DATABASE_ID, 'subscriptions', 'employer_id', 36, true);
-    await createEnumAttribute(DATABASE_ID, 'subscriptions', 'plan', ['basic', 'premium', 'pro'], true);
-    await createEnumAttribute(DATABASE_ID, 'subscriptions', 'status', ['active', 'expired', 'canceled'], true);
-    await createStringAttribute(DATABASE_ID, 'subscriptions', 'ends_at', 50, true);
-
     // Reports
     await createStringAttribute(DATABASE_ID, 'reports', 'user_id', 36, true);
     await createStringAttribute(DATABASE_ID, 'reports', 'title', 255, true);
@@ -209,7 +222,7 @@ async function setup() {
     await createIndex(DATABASE_ID, 'saved_jobs', 'user_id_idx', 'key', ['user_id']);
     await createIndex(DATABASE_ID, 'messages', 'conversation_id_idx', 'key', ['conversation_id']);
     await createIndex(DATABASE_ID, 'notifications', 'user_id_idx', 'key', ['user_id']);
-    await createIndex(DATABASE_ID, 'subscriptions', 'employer_id_idx', 'key', ['employer_id']);
+    await createIndex(DATABASE_ID, 'employee_documents', 'user_id_idx', 'key', ['user_id']);
 
     // 5. Create Buckets
     console.log('Creating storage buckets...');
@@ -217,6 +230,8 @@ async function setup() {
       { id: 'resumes', name: 'Resumes' },
       { id: 'profile_pics', name: 'Profile Pictures' },
       { id: 'company_logos', name: 'Company Logos' },
+      { id: 'employee_documents', name: 'Employee Documents' },
+      { id: 'message_attachments', name: 'Message Attachments' },
     ];
 
     const { Storage } = require('node-appwrite');
@@ -224,11 +239,17 @@ async function setup() {
 
     for (const bucket of buckets) {
       try {
+        const sensitiveBucket = ['employee_documents', 'message_attachments', 'application_documents', 'resumes'].includes(bucket.id);
+        const permissions = sensitiveBucket
+          ? ['create("users")']
+          : [
+              'read("users")',
+              'create("users")',
+              'update("users")',
+              'delete("users")'
+            ];
         await storage.createBucket(bucket.id, bucket.name, [
-          'read("users")',
-          'create("users")',
-          'update("users")',
-          'delete("users")'
+          ...permissions
         ], true);
         console.log(`Bucket ${bucket.name} created`);
       } catch (e) {

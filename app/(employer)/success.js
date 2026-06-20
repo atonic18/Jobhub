@@ -12,17 +12,15 @@ export default function PaymentSuccess() {
       <View className="bg-green-100 p-6 rounded-full mb-8">
         <CheckCircle size={80} color="#10B981" />
       </View>
-      <Text className="text-text dark:text-darkText text-3xl font-bold mb-2 text-center">Payment Successful!</Text>
+      <Text className="text-text dark:text-darkText text-3xl font-bold mb-2 text-center">Unlimited Access Enabled</Text>
       <Text className="text-secondaryText dark:text-darkMuted text-lg text-center mb-10">
-        Your account has been upgraded to Premium. Subscription amounts are recorded in XAF.
+        Premium plans are no longer used by JobHub.
       </Text>
-      <Button 
-        title="Go to Dashboard" 
+      <Button
+        title="Go to Dashboard"
         onPress={() => router.replace('/(employer)/dashboard')}
         className="w-full"
       />
     </View>
   );
 }
-
-

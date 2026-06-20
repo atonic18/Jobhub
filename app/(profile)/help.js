@@ -1,26 +1,26 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Linking, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ChevronDown, ChevronLeft, ChevronRight, Mail } from 'lucide-react-native';
-
-const FAQS = [
-  {
-    question: 'How do I save a job?',
-    answer: 'Tap the bookmark icon on a job card or on the job details page. Saved jobs appear in the Saved Jobs screen.',
-  },
-  {
-    question: 'Where can I track applications?',
-    answer: 'Open the Applied tab. Each submitted application appears there with its current status.',
-  },
-  {
-    question: 'How do messages work?',
-    answer: 'Conversations with employers and recruiters appear in Messages. You can search conversations from the message list.',
-  },
-];
+import { faqService } from '../../services/faqService';
+import { useAuth } from '../../context/AuthContext';
+import { getUserRole } from '../../utils/jobUtils';
 
 export default function HelpScreen() {
   const router = useRouter();
+  const { user } = useAuth();
+  const role = getUserRole(user);
   const [openIndex, setOpenIndex] = useState(0);
+  const [faqs, setFaqs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadFaqs = async () => {
+      setFaqs(await faqService.getFAQItems(role));
+      setLoading(false);
+    };
+    loadFaqs();
+  }, [role]);
 
   return (
     <ScrollView className="flex-1 bg-background dark:bg-darkBg">
@@ -32,7 +32,9 @@ export default function HelpScreen() {
           <Text className="text-text dark:text-darkText text-xl font-bold">Help Center</Text>
         </View>
 
-        {FAQS.map((item, index) => {
+        {loading ? <ActivityIndicator color="#2563EB" className="mt-6" /> : null}
+
+        {faqs.map((item, index) => {
           const open = openIndex === index;
           return (
             <TouchableOpacity

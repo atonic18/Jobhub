@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
-import { Camera, CreditCard, LogOut } from 'lucide-react-native';
+import { Camera, CircleHelp, LogOut } from 'lucide-react-native';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
 import { useAuth } from '../../context/AuthContext';
 import { profileService } from '../../services/profileService';
-import { getUserId } from '../../utils/jobUtils';
+import { getBusinessTypeLabel, getUserId } from '../../utils/jobUtils';
 
 export default function EmployerProfile() {
   const router = useRouter();
@@ -27,6 +27,7 @@ export default function EmployerProfile() {
     contact_phone: user?.phone || '',
     location: '',
     industry: '',
+    business_type_detail: '',
     website: '',
     description: '',
   });
@@ -51,6 +52,7 @@ export default function EmployerProfile() {
         contact_phone: profile.contact_phone || user?.phone || '',
         location: profile.location || '',
         industry: profile.industry || '',
+        business_type_detail: profile.business_type_detail || getBusinessTypeLabel(profile.business_type) || '',
         website: profile.website || '',
         description: profile.description || '',
       }));
@@ -158,6 +160,7 @@ export default function EmployerProfile() {
         contact_phone: formData.contact_phone.trim(),
         location: formData.location.trim(),
         industry: formData.industry.trim(),
+        business_type_detail: formData.business_type_detail.trim(),
         website: formData.website.trim(),
         description: formData.description.trim(),
       });
@@ -211,15 +214,15 @@ export default function EmployerProfile() {
         </View>
 
         <TouchableOpacity
-          onPress={() => router.push('/(employer)/subscription')}
+          onPress={() => router.push('/(profile)/help')}
           className="bg-white dark:bg-darkSurface p-5 rounded-3xl flex-row items-center mb-6 border border-gray-100 dark:border-darkBorder"
         >
           <View className="bg-blue-100 dark:bg-darkSurface2 p-3 rounded-2xl mr-4">
-            <CreditCard size={22} color="#2563EB" />
+            <CircleHelp size={22} color="#2563EB" />
           </View>
           <View className="flex-1">
-            <Text className="text-text dark:text-darkText font-bold">Subscription</Text>
-            <Text className="text-secondaryText dark:text-darkMuted">Manage plan and XAF pricing.</Text>
+            <Text className="text-text dark:text-darkText font-bold">Help Center</Text>
+            <Text className="text-secondaryText dark:text-darkMuted">Read FAQs about posting, interviews, and applications.</Text>
           </View>
         </TouchableOpacity>
 
@@ -242,6 +245,12 @@ export default function EmployerProfile() {
         <Input label="Contact Phone" value={formData.contact_phone} onChangeText={(value) => updateField('contact_phone', value)} placeholder="Company phone" keyboardType="phone-pad" />
         <Input label="Location" value={formData.location} onChangeText={(value) => updateField('location', value)} placeholder="Company location" />
         <Input label="Industry" value={formData.industry} onChangeText={(value) => updateField('industry', value)} placeholder="Technology, Finance, Healthcare" />
+        <Input
+          label="Business Type"
+          value={formData.business_type_detail}
+          onChangeText={(value) => updateField('business_type_detail', value)}
+          placeholder="e.g. Fashion retail, logistics startup, fintech agency"
+        />
         <Input label="Website" value={formData.website} onChangeText={(value) => updateField('website', value)} placeholder="https://company.com" keyboardType="url" autoCapitalize="none" />
         <Input
           label="Company Description"

@@ -83,6 +83,8 @@ export const chatService = {
           attachmentUrl: attachment?.url || '',
           attachmentName: attachment?.name || '',
           attachmentType: attachment?.type || '',
+          attachmentBucketId: attachment?.bucketId || '',
+          attachmentFileId: attachment?.fileId || '',
         }),
         false
       );

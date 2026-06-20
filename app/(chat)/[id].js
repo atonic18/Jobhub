@@ -110,7 +110,8 @@ export default function ChatScreen() {
       });
       if (result.canceled || !result.assets?.[0]) return;
       setUploading(true);
-      const uploaded = await fileService.uploadPickedFile(result.assets[0], userId);
+      const recipients = (conversation?.participants || []).filter((participant) => participant !== userId);
+      const uploaded = await fileService.uploadMessageAttachment(result.assets[0], userId, recipients);
       setAttachment(uploaded);
     } catch (error) {
       Alert.alert('Attachment', error.message || 'Could not upload this file.');

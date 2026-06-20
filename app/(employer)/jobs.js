@@ -4,7 +4,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { ChevronRight, Plus, RefreshCw, Trash2, Users } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
 import { jobService } from '../../services/jobService';
-import { FREE_TIER_ACTIVE_JOB_LIMIT, getSalaryLabel, getUserId } from '../../utils/jobUtils';
+import { getSalaryLabel, getUserId } from '../../utils/jobUtils';
 
 export default function EmployerJobs() {
   const router = useRouter();
@@ -66,7 +66,7 @@ export default function EmployerJobs() {
           <View className="flex-1 mr-4">
             <Text className="text-text dark:text-darkText text-2xl font-bold">Jobs Posted</Text>
             <Text className="text-secondaryText dark:text-darkMuted mt-1">
-              {activeCount}/{FREE_TIER_ACTIVE_JOB_LIMIT} active jobs on the free tier.
+              {activeCount} active {activeCount === 1 ? 'job' : 'jobs'} posted.
             </Text>
           </View>
           <View className="flex-row">

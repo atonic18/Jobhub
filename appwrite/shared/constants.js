@@ -13,8 +13,9 @@ const JobType = {
 const ApplicationStatus = {
   PENDING: 'pending',
   ACCEPTED: 'accepted',
+  NEEDS_REVIEW: 'needs_review',
+  INTERVIEW_SCHEDULED: 'interview_scheduled',
   REJECTED: 'rejected',
-  VIEWED: 'viewed',
 };
 
 const ConversationStatus = {
@@ -26,7 +27,6 @@ const NotificationType = {
   JOB_APPLICATION: 'job_application',
   APPLICATION_STATUS: 'application_status',
   MESSAGE: 'message',
-  SUBSCRIPTION: 'subscription',
   REPORT: 'report',
 };
 

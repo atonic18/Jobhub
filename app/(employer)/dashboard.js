@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl, Alert } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { Bell, Plus, Users, Briefcase, LogOut, ChevronRight, CreditCard } from 'lucide-react-native';
+import { Bell, Plus, Users, Briefcase, LogOut, ChevronRight } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
 import { jobService } from '../../services/jobService';
 import { notificationService } from '../../services/notificationService';
@@ -158,22 +158,6 @@ export default function EmployerDashboard() {
         <View className="bg-white/20 p-2 rounded-xl">
           <Plus size={24} color="white" />
         </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={() => router.push('/(employer)/subscription')}
-        className="bg-white dark:bg-darkSurface p-5 rounded-3xl flex-row items-center justify-between mb-8 border border-gray-100 dark:border-darkBorder"
-      >
-        <View className="flex-row items-center flex-1 mr-3">
-          <View className="bg-blue-100 dark:bg-darkSurface2 p-3 rounded-2xl mr-4">
-            <CreditCard size={22} color="#2563EB" />
-          </View>
-          <View className="flex-1">
-            <Text className="text-text dark:text-darkText font-bold text-lg">Subscription Plans</Text>
-            <Text className="text-secondaryText dark:text-darkMuted">Upgrade posting limits and visibility.</Text>
-          </View>
-        </View>
-        <ChevronRight size={20} color="#64748B" />
       </TouchableOpacity>
 
       <View className="flex-row justify-between items-center mb-4">

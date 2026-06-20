@@ -77,7 +77,6 @@ const run = async () => {
 
   await createInteger('job_postings', 'applicant_count');
   await createInteger('job_postings', 'accepted_count');
-  await createInteger('job_postings', 'max_accepted_count');
   await createString('job_postings', 'required_skills', 255, false, true);
   await createString('job_postings', 'required_documents', 255, false, true);
 

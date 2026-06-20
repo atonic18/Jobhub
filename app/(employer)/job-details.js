@@ -7,7 +7,7 @@ import { chatService } from '../../services/chatService';
 import { fileService } from '../../services/fileService';
 import { profileService } from '../../services/profileService';
 import { useAuth } from '../../context/AuthContext';
-import { FREE_TIER_ACCEPTED_LIMIT, getApplicationStatusLabel, getSalaryLabel, getUserId, getUserTier } from '../../utils/jobUtils';
+import { APPLICATION_STATUSES, getApplicationStatusLabel, getSalaryLabel, getUserId } from '../../utils/jobUtils';
 import { Button } from '../../components/ui/Button';
 import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
 
@@ -33,7 +33,9 @@ export default function EmployerJobDetails() {
       setJob({
         ...jobResponse,
         applicant_count: applicationResponse.total,
-        accepted_count: applicationResponse.documents.filter((item) => item.status === 'accepted').length,
+        accepted_count: applicationResponse.documents.filter((item) =>
+          item.status === APPLICATION_STATUSES.ACCEPTED || item.status === APPLICATION_STATUSES.INTERVIEW_SCHEDULED
+        ).length,
       });
       const enrichedApplications = await Promise.all(
         applicationResponse.documents.map(async (application) => ({
@@ -118,7 +120,9 @@ export default function EmployerJobDetails() {
       const nextApplications = applications.map((item) => item.$id === application.$id ? { ...item, status } : item);
       setJob((current) => ({
         ...current,
-        accepted_count: nextApplications.filter((item) => item.status === 'accepted').length,
+        accepted_count: nextApplications.filter((item) =>
+          item.status === APPLICATION_STATUSES.ACCEPTED || item.status === APPLICATION_STATUSES.INTERVIEW_SCHEDULED
+        ).length,
         applicant_count: nextApplications.length,
       }));
     } catch (error) {
@@ -157,9 +161,9 @@ export default function EmployerJobDetails() {
     );
   }
 
-  const employerTier = getUserTier(user);
-  const acceptedCount = applications.filter((application) => application.status === 'accepted').length;
-  const freeAcceptLimitReached = employerTier !== 'premium' && acceptedCount >= FREE_TIER_ACCEPTED_LIMIT;
+  const acceptedCount = applications.filter((application) =>
+    application.status === APPLICATION_STATUSES.ACCEPTED || application.status === APPLICATION_STATUSES.INTERVIEW_SCHEDULED
+  ).length;
 
   return (
     <ScrollView
@@ -191,13 +195,6 @@ export default function EmployerJobDetails() {
             {job.applicant_count || applications.length} applicants - {acceptedCount} accepted
           </Text>
         </View>
-        {employerTier !== 'premium' ? (
-          <Text className="text-secondaryText dark:text-darkMuted mb-4">
-            Free tier accept limit: {acceptedCount}/{FREE_TIER_ACCEPTED_LIMIT}
-          </Text>
-        ) : (
-          <Text className="text-primary font-bold mb-4">Premium: unlimited accepted applicants</Text>
-        )}
         <Text className="text-text dark:text-darkText font-bold mb-2">Description</Text>
         <Text className="text-secondaryText dark:text-darkMuted leading-6 mb-4">{job.description}</Text>
         {job.requirements ? (
@@ -206,6 +203,18 @@ export default function EmployerJobDetails() {
             <Text className="text-secondaryText dark:text-darkMuted leading-6">{job.requirements}</Text>
           </>
         ) : null}
+        <View className="mt-4">
+          <Text className="text-text dark:text-darkText font-bold mb-2">Hiring Options</Text>
+          <Text className="text-secondaryText dark:text-darkMuted">
+            Auto-accept: {job.auto_accept_enabled ? 'Enabled' : 'Disabled'}
+          </Text>
+          <Text className="text-secondaryText dark:text-darkMuted mt-1">
+            Interview: {job.interview_required ? `${job.interview_type || 'Interview'} on ${job.interview_date || 'date not set'} at ${job.interview_time || 'time not set'}` : 'No interview required'}
+          </Text>
+          {job.interview_required && job.interview_location ? (
+            <Text className="text-secondaryText dark:text-darkMuted mt-1">Venue or link: {job.interview_location}</Text>
+          ) : null}
+        </View>
       </View>
 
       <View className="flex-row mb-8">
@@ -236,7 +245,8 @@ export default function EmployerJobDetails() {
         applications.map((application) => {
           const applicant = application.applicant || {};
           const documents = application.applied_documents?.length ? application.applied_documents : application.documents || [];
-          const acceptDisabled = statusUpdatingId === application.$id || (freeAcceptLimitReached && application.status !== 'accepted');
+          const acceptDisabled = statusUpdatingId === application.$id;
+          const isAccepted = application.status === APPLICATION_STATUSES.ACCEPTED || application.status === APPLICATION_STATUSES.INTERVIEW_SCHEDULED;
           return (
           <View key={application.$id} className="bg-white dark:bg-darkSurface p-5 rounded-3xl border border-gray-100 dark:border-darkBorder mb-4">
             <View className="flex-row justify-between items-center">
@@ -276,6 +286,20 @@ export default function EmployerJobDetails() {
             {application.cover_letter ? (
               <Text className="text-secondaryText dark:text-darkMuted mt-4 leading-5">{application.cover_letter}</Text>
             ) : null}
+            {application.auto_accept_audit || application.match_reasons?.length ? (
+              <View className="bg-blue-50 dark:bg-darkSurface2 rounded-2xl p-3 mt-4">
+                <Text className="text-text dark:text-darkText font-bold mb-1">Auto-Decision Audit</Text>
+                {application.match_score ? (
+                  <Text className="text-secondaryText dark:text-darkMuted text-sm">Match score: {application.match_score}</Text>
+                ) : null}
+                {application.match_reasons?.length ? (
+                  <Text className="text-secondaryText dark:text-darkMuted text-sm mt-1">{application.match_reasons.join(', ')}</Text>
+                ) : null}
+                {application.auto_accept_audit ? (
+                  <Text className="text-secondaryText dark:text-darkMuted text-sm mt-1">{application.auto_accept_audit}</Text>
+                ) : null}
+              </View>
+            ) : null}
             {documents.length > 0 ? (
               <View className="mt-4">
                 <Text className="text-text dark:text-darkText font-bold mb-2">Uploaded Documents</Text>
@@ -297,21 +321,21 @@ export default function EmployerJobDetails() {
               </View>
             ) : null}
             <View className="flex-row mt-4">
-              {application.status !== 'accepted' ? (
+              {!isAccepted ? (
                 <TouchableOpacity
-                  onPress={() => updateApplicationStatus(application, 'accepted')}
+                  onPress={() => updateApplicationStatus(application, APPLICATION_STATUSES.ACCEPTED)}
                   disabled={acceptDisabled}
                   className={`flex-1 py-3 rounded-2xl flex-row items-center justify-center mr-2 ${acceptDisabled ? 'bg-gray-200 dark:bg-darkSurface2' : 'bg-green-600'}`}
                 >
                   <Check size={18} color={acceptDisabled ? '#64748B' : 'white'} />
                   <Text className={`${acceptDisabled ? 'text-secondaryText dark:text-darkMuted' : 'text-white'} font-bold ml-2`}>
-                    {freeAcceptLimitReached && application.status !== 'accepted' ? 'Limit Reached' : 'Accept'}
+                    Accept
                   </Text>
                 </TouchableOpacity>
               ) : null}
-              {application.status !== 'rejected' ? (
+              {application.status !== APPLICATION_STATUSES.REJECTED ? (
                 <TouchableOpacity
-                  onPress={() => updateApplicationStatus(application, 'rejected')}
+                  onPress={() => updateApplicationStatus(application, APPLICATION_STATUSES.REJECTED)}
                   disabled={statusUpdatingId === application.$id}
                   className="flex-1 py-3 rounded-2xl flex-row items-center justify-center bg-red-50 ml-2"
                 >

@@ -1,6 +1,7 @@
-const { Client, Databases, ID, Permission, Query, Role } = require('node-appwrite');
+const { Client, Databases, ID, Permission, Query, Role, Storage } = require('node-appwrite');
 const onApplicationSubmitted = require('../onApplicationSubmitted/index.js');
 const onJobPostCreated = require('../onJobPostCreated/index.js');
+const { acceptedStatuses, grantAttachmentAccess } = require('../shared/applicationWorkflow.js');
 
 const parseBody = (req) => {
   if (!req.body) return {};
@@ -20,6 +21,7 @@ const getClient = () => {
 
   return {
     databases: new Databases(client),
+    storage: new Storage(client),
   };
 };
 
@@ -42,7 +44,7 @@ const removeApplication = async ({ databases, databaseId, applicationId, callerI
     ]);
     await databases.updateDocument(databaseId, 'job_postings', application.job_id, {
       applicant_count: applications.total,
-      accepted_count: applications.documents.filter((item) => item.status === 'accepted').length,
+      accepted_count: applications.documents.filter((item) => acceptedStatuses.includes(item.status)).length,
     }).catch(() => null);
   }
 
@@ -60,7 +62,7 @@ module.exports = async (context) => {
   const body = parseBody(req);
   const databaseId = process.env.APPWRITE_DATABASE_ID || 'jobhub_db';
   const callerId = req.headers['x-appwrite-user-id'];
-  const { databases } = getClient();
+  const { databases, storage } = getClient();
 
   if (body.action === 'removeApplication') {
     try {
@@ -92,6 +94,8 @@ module.exports = async (context) => {
     attachmentUrl,
     attachmentName,
     attachmentType,
+    attachmentBucketId,
+    attachmentFileId,
   } = body;
   const text = String(content || messageText || '').trim();
 
@@ -109,6 +113,23 @@ module.exports = async (context) => {
 
     if (!participants.includes(callerId)) {
       return res.json({ success: false, error: 'You are not part of this conversation.' }, 403);
+    }
+
+    const attachment = attachmentBucketId && attachmentFileId ? {
+      bucketId: attachmentBucketId,
+      fileId: attachmentFileId,
+      name: attachmentName || 'Attachment',
+      type: attachmentType || '',
+      url: attachmentUrl || '',
+    } : null;
+
+    if (attachment) {
+      await grantAttachmentAccess({
+        storage,
+        attachment,
+        ownerId: callerId,
+        readerIds: participants.filter((id) => id !== callerId),
+      });
     }
 
     const message = await databases.createDocument(databaseId, 'messages', ID.unique(), {

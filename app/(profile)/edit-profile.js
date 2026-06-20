@@ -1,14 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator, KeyboardAvoidingView, Platform, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
-import { Camera, ChevronLeft } from 'lucide-react-native';
+import * as DocumentPicker from 'expo-document-picker';
+import { Camera, ChevronLeft, FileText, Paperclip, RefreshCw, Trash2 } from 'lucide-react-native';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
 import { useAuth } from '../../context/AuthContext';
 import { profileService } from '../../services/profileService';
-import { getUserId, getUserRole } from '../../utils/jobUtils';
+import { documentService } from '../../services/documentService';
+import { fileService } from '../../services/fileService';
+import {
+  EMPLOYEE_DOCUMENT_TYPES,
+  getBusinessTypeLabel,
+  getDocumentTypeLabel,
+  getUserId,
+  getUserRole,
+} from '../../utils/jobUtils';
 
 export default function EditProfile() {
   const router = useRouter();
@@ -20,17 +29,27 @@ export default function EditProfile() {
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(user?.profile_pic_url || '');
   const [profileId, setProfileId] = useState(null);
+  const [documents, setDocuments] = useState([]);
+  const [documentType, setDocumentType] = useState('cv');
+  const [uploadingDocument, setUploadingDocument] = useState(false);
+  const [replacingDocumentId, setReplacingDocumentId] = useState(null);
+  const [deletingDocumentId, setDeletingDocumentId] = useState(null);
+  const [rescanningDocumentId, setRescanningDocumentId] = useState(null);
   const [formData, setFormData] = useState({
     full_name: user?.full_name || user?.name || '',
     phone: user?.phone || '',
     title: '',
     bio: '',
     skills: '',
+    experience: '',
+    certificates: '',
+    qualifications: '',
     location: '',
     company_name: '',
     contact_email: '',
     contact_phone: '',
     industry: '',
+    business_type_detail: '',
     description: '',
     website: '',
   });
@@ -51,14 +70,22 @@ export default function EditProfile() {
         title: profile?.title || '',
         bio: profile?.bio || '',
         skills: Array.isArray(profile?.skills) ? profile.skills.join(', ') : profile?.skills || '',
+        experience: profile?.experience || '',
+        certificates: Array.isArray(profile?.certificates) ? profile.certificates.join(', ') : profile?.certificates || '',
+        qualifications: profile?.qualifications || '',
         location: profile?.location || '',
         company_name: profile?.company_name || '',
         contact_email: profile?.contact_email || user?.email || '',
         contact_phone: profile?.contact_phone || user?.phone || '',
         industry: profile?.industry || '',
+        business_type_detail: profile?.business_type_detail || getBusinessTypeLabel(profile?.business_type) || '',
         description: profile?.description || '',
         website: profile?.website || '',
       }));
+      if (role !== 'employer') {
+        const documentResponse = await documentService.getDocuments(userId);
+        setDocuments(documentResponse.documents || []);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -140,6 +167,101 @@ export default function EditProfile() {
     ]);
   };
 
+  const pickDocumentAsset = async () => {
+    const result = await DocumentPicker.getDocumentAsync({
+      type: ['image/*', 'application/pdf'],
+      multiple: false,
+      copyToCacheDirectory: true,
+    });
+    if (result.canceled || !result.assets?.[0]) return null;
+    return result.assets[0];
+  };
+
+  const uploadEmployeeDocument = async () => {
+    if (!userId || uploadingDocument) return;
+    try {
+      const asset = await pickDocumentAsset();
+      if (!asset) return;
+      setUploadingDocument(true);
+      const created = await documentService.uploadDocument({
+        userId,
+        documentType,
+        asset,
+      });
+      setDocuments((current) => [created, ...current]);
+    } catch (error) {
+      Alert.alert('Document upload', error.message || 'Could not upload this document.');
+    } finally {
+      setUploadingDocument(false);
+    }
+  };
+
+  const replaceEmployeeDocument = async (document) => {
+    if (!document || replacingDocumentId) return;
+    try {
+      const asset = await pickDocumentAsset();
+      if (!asset) return;
+      setReplacingDocumentId(document.$id);
+      const updated = await documentService.replaceDocument({ document, asset });
+      setDocuments((current) => current.map((item) => item.$id === document.$id ? updated : item));
+    } catch (error) {
+      Alert.alert('Replace document', error.message || 'Could not replace this document.');
+    } finally {
+      setReplacingDocumentId(null);
+    }
+  };
+
+  const deleteEmployeeDocument = (document) => {
+    Alert.alert('Delete document', `Delete "${document.file_name || 'document'}"?`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          setDeletingDocumentId(document.$id);
+          try {
+            await documentService.deleteDocument(document);
+            setDocuments((current) => current.filter((item) => item.$id !== document.$id));
+          } catch (error) {
+            Alert.alert('Delete document', error.message || 'Could not delete this document.');
+          } finally {
+            setDeletingDocumentId(null);
+          }
+        },
+      },
+    ]);
+  };
+
+  const rescanEmployeeDocument = async (document) => {
+    setRescanningDocumentId(document.$id);
+    try {
+      await documentService.rescanDocument(document.$id);
+      setDocuments((current) =>
+        current.map((item) => item.$id === document.$id ? { ...item, scan_status: 'queued', scan_error: '' } : item)
+      );
+    } catch (error) {
+      Alert.alert('Document scan', error.message || 'Could not scan this document.');
+    } finally {
+      setRescanningDocumentId(null);
+    }
+  };
+
+  const openEmployeeDocument = async (document) => {
+    const url = fileService.getOpenUrl({
+      bucketId: document.bucket_id,
+      fileId: document.file_id,
+      name: document.file_name,
+      type: document.file_type,
+      url: document.file_url,
+    });
+    if (!url) return;
+    try {
+      await Linking.openURL(url);
+    } catch (error) {
+      Alert.alert('Document', 'Could not open this document.');
+    }
+  };
+
   const handleSave = async () => {
     if (!formData.full_name.trim()) {
       Alert.alert('Profile', 'Full name is required.');
@@ -161,6 +283,10 @@ export default function EditProfile() {
         .split(',')
         .map((skill) => skill.trim())
         .filter(Boolean);
+      const certificates = formData.certificates
+        .split(',')
+        .map((certificate) => certificate.trim())
+        .filter(Boolean);
 
       let nextProfileId = profileId;
       if (!nextProfileId) {
@@ -172,6 +298,7 @@ export default function EditProfile() {
               contact_phone: formData.contact_phone.trim(),
               location: formData.location.trim(),
               industry: formData.industry.trim(),
+              business_type_detail: formData.business_type_detail.trim(),
               description: formData.description.trim(),
               website: formData.website.trim(),
             })
@@ -179,6 +306,9 @@ export default function EditProfile() {
               title: formData.title.trim(),
               bio: formData.bio.trim(),
               skills,
+              experience: formData.experience.trim(),
+              certificates,
+              qualifications: formData.qualifications.trim(),
               location: formData.location.trim(),
             });
         nextProfileId = createdProfile.$id;
@@ -192,6 +322,7 @@ export default function EditProfile() {
           contact_phone: formData.contact_phone.trim(),
           location: formData.location.trim(),
           industry: formData.industry.trim(),
+          business_type_detail: formData.business_type_detail.trim(),
           description: formData.description.trim(),
           website: formData.website.trim(),
         });
@@ -200,6 +331,9 @@ export default function EditProfile() {
           title: formData.title.trim(),
           bio: formData.bio.trim(),
           skills,
+          experience: formData.experience.trim(),
+          certificates,
+          qualifications: formData.qualifications.trim(),
           location: formData.location.trim(),
         });
       }
@@ -257,6 +391,12 @@ export default function EditProfile() {
           <Input label="Contact Phone" value={formData.contact_phone} onChangeText={(value) => updateField('contact_phone', value)} placeholder="Company phone" keyboardType="phone-pad" />
           <Input label="Location" value={formData.location} onChangeText={(value) => updateField('location', value)} placeholder="Company location" />
           <Input label="Industry" value={formData.industry} onChangeText={(value) => updateField('industry', value)} placeholder="e.g. Technology, Finance" />
+          <Input
+            label="Business Type"
+            value={formData.business_type_detail}
+            onChangeText={(value) => updateField('business_type_detail', value)}
+            placeholder="e.g. Fashion retail, logistics startup, fintech agency"
+          />
           <Input label="Website" value={formData.website} onChangeText={(value) => updateField('website', value)} placeholder="https://company.com" autoCapitalize="none" keyboardType="url" />
           <Input label="Company Description" value={formData.description} onChangeText={(value) => updateField('description', value)} placeholder="What does your company do?" multiline numberOfLines={4} textAlignVertical="top" inputClassName="min-h-[120px]" />
         </>
@@ -265,7 +405,84 @@ export default function EditProfile() {
           <Input label="Professional Title" value={formData.title} onChangeText={(value) => updateField('title', value)} placeholder="e.g. Product Designer" />
           <Input label="Location" value={formData.location} onChangeText={(value) => updateField('location', value)} placeholder="City or preferred work location" />
           <Input label="Skills" value={formData.skills} onChangeText={(value) => updateField('skills', value)} placeholder="React, UX, Writing" />
+          <Input label="Experience" value={formData.experience} onChangeText={(value) => updateField('experience', value)} placeholder="Summarize relevant work experience" multiline numberOfLines={4} textAlignVertical="top" inputClassName="min-h-[120px]" />
+          <Input label="Certificates" value={formData.certificates} onChangeText={(value) => updateField('certificates', value)} placeholder="CPA, HND Accounting, AWS Cloud Practitioner" />
+          <Input label="Qualifications" value={formData.qualifications} onChangeText={(value) => updateField('qualifications', value)} placeholder="Degrees, diplomas, licenses, or training" multiline numberOfLines={3} textAlignVertical="top" inputClassName="min-h-[90px]" />
           <Input label="Bio" value={formData.bio} onChangeText={(value) => updateField('bio', value)} placeholder="Short profile summary" multiline numberOfLines={4} textAlignVertical="top" inputClassName="min-h-[120px]" />
+          <View className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-3xl p-5 mb-6">
+            <Text className="text-text dark:text-darkText text-lg font-bold mb-1">CV and Credentials</Text>
+            <Text className="text-secondaryText dark:text-darkMuted mb-4">PDFs and images stay private until you choose to share them with an application.</Text>
+
+            <Text className="text-text dark:text-darkText font-semibold mb-2 ml-1">Document Type</Text>
+            <View className="flex-row flex-wrap mb-4">
+              {EMPLOYEE_DOCUMENT_TYPES.map((type) => (
+                <TouchableOpacity
+                  key={type.value}
+                  onPress={() => setDocumentType(type.value)}
+                  className={`px-4 py-2 rounded-2xl border mr-2 mb-2 ${documentType === type.value ? 'bg-primary border-primary' : 'bg-gray-50 dark:bg-darkSurface2 border-gray-200 dark:border-darkBorder'}`}
+                >
+                  <Text className={`${documentType === type.value ? 'text-white' : 'text-secondaryText dark:text-darkMuted'} font-bold`}>
+                    {type.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <TouchableOpacity
+              onPress={uploadEmployeeDocument}
+              disabled={uploadingDocument}
+              className={`border border-dashed border-primary rounded-2xl p-4 flex-row items-center justify-center mb-4 ${uploadingDocument ? 'opacity-60' : ''}`}
+            >
+              <Paperclip size={18} color="#2563EB" />
+              <Text className="text-primary font-bold ml-2">{uploadingDocument ? 'Uploading...' : 'Upload PDF or Image'}</Text>
+            </TouchableOpacity>
+
+            {documents.length === 0 ? (
+              <View className="bg-gray-50 dark:bg-darkSurface2 rounded-2xl p-4">
+                <Text className="text-secondaryText dark:text-darkMuted">No CV or credentials uploaded yet.</Text>
+              </View>
+            ) : (
+              documents.map((document) => (
+                <View key={document.$id} className="bg-gray-50 dark:bg-darkSurface2 rounded-2xl p-4 mb-3">
+                  <TouchableOpacity onPress={() => openEmployeeDocument(document)} className="flex-row items-center">
+                    <FileText size={20} color="#2563EB" />
+                    <View className="flex-1 ml-3">
+                      <Text className="text-text dark:text-darkText font-bold" numberOfLines={1}>{document.file_name || 'Document'}</Text>
+                      <Text className="text-secondaryText dark:text-darkMuted text-xs mt-1">
+                        {getDocumentTypeLabel(document.document_type)} - {document.scan_status || 'queued'}
+                      </Text>
+                      {document.scan_error ? (
+                        <Text className="text-red-500 text-xs mt-1" numberOfLines={2}>{document.scan_error}</Text>
+                      ) : null}
+                    </View>
+                  </TouchableOpacity>
+                  <View className="flex-row mt-3">
+                    <TouchableOpacity
+                      onPress={() => replaceEmployeeDocument(document)}
+                      disabled={replacingDocumentId === document.$id}
+                      className="flex-1 bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-2xl py-3 items-center mr-2"
+                    >
+                      <Text className="text-primary font-bold">{replacingDocumentId === document.$id ? 'Replacing...' : 'Replace'}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => rescanEmployeeDocument(document)}
+                      disabled={rescanningDocumentId === document.$id}
+                      className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-2xl px-4 items-center justify-center mr-2"
+                    >
+                      <RefreshCw size={18} color={rescanningDocumentId === document.$id ? '#94A3B8' : '#2563EB'} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => deleteEmployeeDocument(document)}
+                      disabled={deletingDocumentId === document.$id}
+                      className="bg-red-50 rounded-2xl px-4 items-center justify-center"
+                    >
+                      <Trash2 size={18} color={deletingDocumentId === document.$id ? '#94A3B8' : '#EF4444'} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))
+            )}
+          </View>
         </>
       )}
 

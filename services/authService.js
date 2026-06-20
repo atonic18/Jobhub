@@ -39,7 +39,7 @@ export const authService = {
     await account.createEmailPasswordSession(email, password);
     console.log('Session created after registration.');
     try {
-      await account.updatePrefs({ type, full_name: fullName, skills: toSkillArray(skills), tier: 'free' });
+      await account.updatePrefs({ type, full_name: fullName, skills: toSkillArray(skills) });
       console.log('Account preferences saved after registration.');
     } catch (prefsError) {
       console.error('Error saving account preferences:', prefsError.message);
@@ -61,7 +61,6 @@ export const authService = {
         full_name: fullName,
         profile_pic_url: '',
         type,
-        tier: 'free',
         is_verified: false,
       }, userPermissions);
       console.log('User document created successfully');
@@ -78,6 +77,9 @@ export const authService = {
           title: '',
           bio: '',
           skills: toSkillArray(skills),
+          experience: '',
+          certificates: [],
+          qualifications: '',
           location: '',
           show_profile_to_employers: true,
         }, userPermissions);
@@ -90,6 +92,7 @@ export const authService = {
           contact_phone: '',
           location: '',
           industry: '',
+          business_type: 'corporate',
           description: '',
           website: '',
           is_active: true,
@@ -124,27 +127,6 @@ export const authService = {
     }
   },
 
-  updateTier: async (userId, tier) => {
-    const normalizedTier = tier === 'premium' ? 'premium' : 'free';
-    const userDoc = await databases.listDocuments(DATABASE_ID, 'users', [
-      Query.equal('user_id', userId)
-    ]);
-
-    if (userDoc.total > 0) {
-      await databases.updateDocument(DATABASE_ID, 'users', userDoc.documents[0].$id, {
-        tier: normalizedTier,
-      });
-    }
-
-    const currentPrefs = (await account.getPrefs()) || {};
-    await account.updatePrefs({
-      ...currentPrefs,
-      tier: normalizedTier,
-    });
-
-    return normalizedTier;
-  },
-
   // Get current user data with profile
   getCurrentUser: async () => {
     try {
@@ -165,7 +147,6 @@ export const authService = {
             user_id: userAccount.$id,
             full_name: userAccount.name || userAccount.prefs?.full_name,
             type: userAccount.prefs?.type || 'employee',
-            tier: userAccount.prefs?.tier || 'free',
             profile_pic_url: userAccount.prefs?.profile_pic_url || '',
             needsProfile: true,
           };
@@ -182,7 +163,6 @@ export const authService = {
           full_name: profileDoc.full_name || userAccount.name,
           profile_pic_url: profileDoc.profile_pic_url || userAccount.prefs?.profile_pic_url || '',
           type: profileDoc.type,
-          tier: profileDoc.tier || userAccount.prefs?.tier || 'free',
         };
       } catch (dbError) {
         console.error('authService: Database error fetching user document:', dbError.message);

@@ -1,9 +1,20 @@
 import { ID, Permission, Role } from 'react-native-appwrite';
 import { storage } from './appwrite';
-import { APPLICATION_DOCUMENTS_BUCKET_ID, PROFILE_PICTURES_BUCKET_ID } from '../utils/jobUtils';
+import {
+  APPLICATION_DOCUMENTS_BUCKET_ID,
+  EMPLOYEE_DOCUMENTS_BUCKET_ID,
+  MESSAGE_ATTACHMENTS_BUCKET_ID,
+  PROFILE_PICTURES_BUCKET_ID,
+} from '../utils/jobUtils';
 
-const filePermissions = (userId) => [
-  Permission.read(Role.any()),
+const privateFilePermissions = (userId, extraReaderIds = []) => [
+  Permission.read(Role.user(userId)),
+  ...extraReaderIds.filter(Boolean).map((readerId) => Permission.read(Role.user(readerId))),
+  Permission.update(Role.user(userId)),
+  Permission.delete(Role.user(userId)),
+];
+
+const profileImagePermissions = (userId) => [
   Permission.read(Role.users()),
   Permission.update(Role.user(userId)),
   Permission.delete(Role.user(userId)),
@@ -37,26 +48,39 @@ const getStoredFileUrl = (file, mode = 'view') => {
 };
 
 export const fileService = {
-  uploadPickedFile: async (asset, userId) => {
+  uploadPickedFile: async (asset, userId, options = {}) => {
     const file = normalizePickedFile(asset);
     if (!file) throw new Error('No file selected.');
+    const bucketId = options.bucketId || APPLICATION_DOCUMENTS_BUCKET_ID;
+    const permissions = options.publicRead
+      ? profileImagePermissions(userId)
+      : privateFilePermissions(userId, options.extraReaderIds || []);
 
     const uploaded = await storage.createFile(
-      APPLICATION_DOCUMENTS_BUCKET_ID,
+      bucketId,
       ID.unique(),
       file,
-      filePermissions(userId)
+      permissions
     );
 
     return {
       fileId: uploaded.$id,
-      bucketId: APPLICATION_DOCUMENTS_BUCKET_ID,
+      bucketId,
       name: file.name,
       type: file.type,
       size: file.size,
-      url: String(storage.getFileView(APPLICATION_DOCUMENTS_BUCKET_ID, uploaded.$id)),
+      url: String(storage.getFileView(bucketId, uploaded.$id)),
     };
   },
+
+  uploadEmployeeDocumentFile: async (asset, userId) =>
+    fileService.uploadPickedFile(asset, userId, { bucketId: EMPLOYEE_DOCUMENTS_BUCKET_ID }),
+
+  uploadMessageAttachment: async (asset, userId, extraReaderIds = []) =>
+    fileService.uploadPickedFile(asset, userId, {
+      bucketId: MESSAGE_ATTACHMENTS_BUCKET_ID,
+      extraReaderIds,
+    }),
 
   uploadProfileImage: async (asset, userId) => {
     const file = normalizePickedFile({
@@ -70,7 +94,7 @@ export const fileService = {
       PROFILE_PICTURES_BUCKET_ID,
       ID.unique(),
       file,
-      filePermissions(userId)
+      profileImagePermissions(userId)
     );
 
     return {
@@ -97,6 +121,23 @@ export const fileService = {
         type: '',
       };
     }
+  },
+
+  grantFileReadAccess: async (file, ownerId, readerIds = []) => {
+    const document = fileService.parseFileReference(file);
+    if (!document?.bucketId || !document?.fileId || !ownerId) return null;
+    const current = await storage.getFile(document.bucketId, document.fileId).catch(() => null);
+    const permissions = Array.from(new Set([
+      ...(current?.$permissions || []),
+      ...privateFilePermissions(ownerId, readerIds),
+    ]));
+    return await storage.updateFile(document.bucketId, document.fileId, document.name || undefined, permissions);
+  },
+
+  deleteStoredFile: async (file) => {
+    const document = fileService.parseFileReference(file);
+    if (!document?.bucketId || !document?.fileId) return null;
+    return await storage.deleteFile(document.bucketId, document.fileId);
   },
 
   getFileViewUrl: (file) => getStoredFileUrl(file, 'view'),
