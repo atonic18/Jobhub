@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5b488d2c-d28c-4c6c-b1a3-7ed4a5d5aab6" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(admin)/dashboard.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(auth)/login.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(auth)/register.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(chat)/[id].js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(chat)/list.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(employer)/checkout.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(employer)/dashboard.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(employer)/post-job.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(employer)/subscription.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(employer)/success.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(home)/home.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(home)/job-details.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(profile)/settings.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/_layout.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/api/applications.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/api/auth.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/api/chat.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/api/deps.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/api/jobs.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/api/users.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/core/config.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/core/security.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/db/database.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/models/models.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/schemas/schemas.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/requirements.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/cards/JobCard.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/ui/Button.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/ui/Input.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/context/AuthContext.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/global.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/api.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="89" />
+    <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.2138842668345076" />
+      <entry key="MS500" value="2.1463256026910384" />
+      <entry key="S2" value="3.9417884394046854" />
+      <entry key="S5" value="6.026003015939217" />
+      <entry key="S10" value="7.275932489655403" />
+      <entry key="S30" value="8.362004828436717" />
+      <entry key="S60" value="8.672311406233648" />
+      <entry key="M2" value="8.833919727068526" />
+      <entry key="M5" value="8.93302294402448" />
+      <entry key="M10" value="8.966419945454353" />
+      <entry key="M15" value="8.977592905389411" />
+      <entry key="M30" value="8.988786246417162" />
+      <entry key="H1" value="8.99555815282552" />
+      <entry key="H2" value="10.009238989627312" />
+      <entry key="H4" value="46.69448088323779" />
+      <entry key="D1" value="946.1910311934587" />
+      <entry key="W1" value="1901.7923567195971" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="0.0" />
+      <entry key="M2" value="0.0" />
+      <entry key="M5" value="0.0" />
+      <entry key="M10" value="0.0" />
+      <entry key="M15" value="0.0" />
+      <entry key="M30" value="1.858570436724363E-251" />
+      <entry key="H1" value="1.1895201134916146E-125" />
+      <entry key="H2" value="9.696122365514145E-63" />
+      <entry key="H4" value="2.7809502080626806E-31" />
+      <entry key="D1" value="4.569311255872857E-5" />
+      <entry key="W1" value="1.4257836109259807" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="1.133982125923517" />
+      <entry key="MS500" value="2.1181227602389483" />
+      <entry key="S2" value="3.9267702982190276" />
+      <entry key="S5" value="6.016247036502812" />
+      <entry key="S10" value="7.269951216181745" />
+      <entry key="S30" value="8.359694456074342" />
+      <entry key="S60" value="8.671111196894254" />
+      <entry key="M2" value="8.833307914822527" />
+      <entry key="M5" value="8.932775349506533" />
+      <entry key="M10" value="8.966295664857512" />
+      <entry key="M15" value="8.977509943871311" />
+      <entry key="M30" value="8.988744711669753" />
+      <entry key="H1" value="8.99553736906107" />
+      <entry key="H2" value="10.00922733750153" />
+      <entry key="H4" value="46.694451213997425" />
+      <entry key="D1" value="946.1909391215099" />
+      <entry key="W1" value="1903.2180514708562" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0,
+  &quot;fromUser&quot;: false
+}</component>
+  <component name="ProjectId" id="3Ds5PRg3TtFKIBRXp1JyUSh5Vm7" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Node.js.[id].js.executor": "Run",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "javascript.preferred.runtime.type.id": "node",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "C:/Users/Hikary/Desktop/jobhub/jobhubcodebase/jobhub/app/(tabs)",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "C:/Users/Hikary/Desktop/jobhub/jobhubcodebase/src/main.js",
+    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\Hikary\\Desktop\\jobhub\\jobhubcodebase\\node_modules\\prettier",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "preferences.keymap",
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\WebStorm 2026.1.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Hikary\Desktop\jobhub\jobhubcodebase\jobhub\app\(tabs)" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-WS-261.24374.125" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5b488d2c-d28c-4c6c-b1a3-7ed4a5d5aab6" name="Changes" comment="" />
+      <created>1779057913107</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1779057913107</updated>
+      <workItem from="1779057913908" duration="12122000" />
+      <workItem from="1779095748916" duration="13071000" />
+      <workItem from="1779198986654" duration="13222000" />
+      <workItem from="1779273019617" duration="3148000" />
+      <workItem from="1779361089000" duration="26232000" />
+      <workItem from="1780746454995" duration="98000" />
+      <workItem from="1780746644260" duration="4285000" />
+      <workItem from="1780750980781" duration="1164000" />
+      <workItem from="1780753207707" duration="7644000" />
+      <workItem from="1781523406829" duration="302000" />
+      <workItem from="1781524336683" duration="36930000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/JobHubTemp" />
+    </ignored-roots>
+  </component>
+</project>

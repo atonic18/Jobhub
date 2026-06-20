@@ -1,0 +1,7 @@
+{
+  "name": "appwrite-functions",
+  "version": "1.0.0",
+  "dependencies": {
+    "node-appwrite": "^26.0.0"
+  }
+}

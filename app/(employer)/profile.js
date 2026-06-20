@@ -1,0 +1,263 @@
+import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
+import { useRouter } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
+import { Camera, CreditCard, LogOut } from 'lucide-react-native';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
+import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
+import { useAuth } from '../../context/AuthContext';
+import { profileService } from '../../services/profileService';
+import { getUserId } from '../../utils/jobUtils';
+
+export default function EmployerProfile() {
+  const router = useRouter();
+  const { user, logout, refreshUserData } = useAuth();
+  const userId = getUserId(user);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState(user?.profile_pic_url || '');
+  const [profileId, setProfileId] = useState(null);
+  const [formData, setFormData] = useState({
+    full_name: user?.full_name || user?.name || '',
+    phone: user?.phone || '',
+    company_name: '',
+    contact_email: user?.email || '',
+    contact_phone: user?.phone || '',
+    location: '',
+    industry: '',
+    website: '',
+    description: '',
+  });
+
+  useEffect(() => {
+    loadProfile();
+  }, [userId]);
+
+  const loadProfile = async () => {
+    if (!userId) return;
+    try {
+      const profile = await profileService.ensureEmployerProfile(userId, {
+        full_name: user?.full_name || user?.name,
+        email: user?.email,
+        phone: user?.phone,
+      });
+      setProfileId(profile.$id);
+      setFormData((current) => ({
+        ...current,
+        company_name: profile.company_name || '',
+        contact_email: profile.contact_email || user?.email || '',
+        contact_phone: profile.contact_phone || user?.phone || '',
+        location: profile.location || '',
+        industry: profile.industry || '',
+        website: profile.website || '',
+        description: profile.description || '',
+      }));
+    } catch (error) {
+      Alert.alert('Profile', error.message || 'Could not load company profile.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateField = (key, value) => {
+    setFormData((current) => ({ ...current, [key]: value }));
+  };
+
+  const uploadProfileAsset = async (asset) => {
+    if (!asset || !userId) return;
+
+    setUploadingPhoto(true);
+    try {
+      const uploaded = await profileService.uploadProfilePicture(userId, asset, { ...user, type: 'employer' });
+      setAvatarUrl(uploaded.profile_pic_url);
+      await refreshUserData();
+    } catch (error) {
+      Alert.alert('Profile picture', error.message || 'Could not upload this picture.');
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  const chooseFromGallery = async () => {
+    try {
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permission.granted) {
+        Alert.alert('Profile picture', 'Gallery permission is required to choose a profile picture.');
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (result.canceled || !result.assets?.[0]) return;
+
+      await uploadProfileAsset(result.assets[0]);
+    } catch (error) {
+      Alert.alert('Profile picture', error.message || 'Could not choose this picture.');
+    }
+  };
+
+  const takeProfilePhoto = async () => {
+    try {
+      const permission = await ImagePicker.requestCameraPermissionsAsync();
+      if (!permission.granted) {
+        Alert.alert('Profile picture', 'Camera permission is required to take a profile picture.');
+        return;
+      }
+
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (result.canceled || !result.assets?.[0]) return;
+
+      await uploadProfileAsset(result.assets[0]);
+    } catch (error) {
+      Alert.alert('Profile picture', error.message || 'Could not take this picture.');
+    }
+  };
+
+  const pickProfilePicture = () => {
+    if (!userId || uploadingPhoto) return;
+    Alert.alert('Profile picture', 'Choose a source for the profile picture.', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Gallery', onPress: chooseFromGallery },
+      { text: 'Camera', onPress: takeProfilePhoto },
+    ]);
+  };
+
+  const handleSave = async () => {
+    if (!formData.full_name.trim() || !formData.company_name.trim()) {
+      Alert.alert('Profile', 'Your name and company name are required.');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      await profileService.updateUserDoc(userId, {
+        full_name: formData.full_name.trim(),
+        phone: formData.phone.trim(),
+      }, { ...user, type: 'employer' });
+
+      const profile = profileId
+        ? { $id: profileId }
+        : await profileService.ensureEmployerProfile(userId, formData);
+
+      await profileService.updateEmployerProfile(profile.$id, {
+        company_name: formData.company_name.trim(),
+        contact_email: formData.contact_email.trim(),
+        contact_phone: formData.contact_phone.trim(),
+        location: formData.location.trim(),
+        industry: formData.industry.trim(),
+        website: formData.website.trim(),
+        description: formData.description.trim(),
+      });
+
+      setProfileId(profile.$id);
+      await refreshUserData();
+      Alert.alert('Profile saved', 'Company information has been updated.');
+    } catch (error) {
+      Alert.alert('Profile', error.message || 'Could not save company profile.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    Alert.alert('Logout', 'Do you want to logout of JobHub?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Logout',
+        style: 'destructive',
+        onPress: async () => {
+          await logout();
+          router.replace('/(auth)/login');
+        },
+      },
+    ]);
+  };
+
+  if (loading) {
+    return (
+      <View className="flex-1 bg-background dark:bg-darkBg items-center justify-center">
+        <ActivityIndicator size="large" color="#2563EB" />
+      </View>
+    );
+  }
+
+  return (
+    <KeyboardAvoidingView
+      className="flex-1 bg-background dark:bg-darkBg"
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScrollView className="flex-1 px-6 pt-12" keyboardShouldPersistTaps="handled">
+        <View className="flex-row justify-between items-center mb-8">
+          <View className="flex-1 mr-4">
+            <Text className="text-text dark:text-darkText text-2xl font-bold">Company Profile</Text>
+            <Text className="text-secondaryText dark:text-darkMuted mt-1">Keep employer information current for applicants.</Text>
+          </View>
+          <TouchableOpacity onPress={handleLogout} className="bg-red-50 p-3 rounded-2xl">
+            <LogOut size={22} color="#EF4444" />
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity
+          onPress={() => router.push('/(employer)/subscription')}
+          className="bg-white dark:bg-darkSurface p-5 rounded-3xl flex-row items-center mb-6 border border-gray-100 dark:border-darkBorder"
+        >
+          <View className="bg-blue-100 dark:bg-darkSurface2 p-3 rounded-2xl mr-4">
+            <CreditCard size={22} color="#2563EB" />
+          </View>
+          <View className="flex-1">
+            <Text className="text-text dark:text-darkText font-bold">Subscription</Text>
+            <Text className="text-secondaryText dark:text-darkMuted">Manage plan and XAF pricing.</Text>
+          </View>
+        </TouchableOpacity>
+
+        <View className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-3xl p-5 mb-6 items-center">
+          <ProfileAvatar uri={avatarUrl} name={formData.company_name || formData.full_name} size={96} textSize={36} className="mb-4" />
+          <TouchableOpacity
+            onPress={pickProfilePicture}
+            disabled={uploadingPhoto}
+            className={`bg-blue-100 dark:bg-darkSurface2 px-4 py-3 rounded-2xl flex-row items-center ${uploadingPhoto ? 'opacity-60' : ''}`}
+          >
+            <Camera size={18} color="#2563EB" />
+            <Text className="text-primary font-bold ml-2">{uploadingPhoto ? 'Uploading...' : 'Change Profile Picture'}</Text>
+          </TouchableOpacity>
+        </View>
+
+        <Input label="Your Name" value={formData.full_name} onChangeText={(value) => updateField('full_name', value)} placeholder="Your full name" />
+        <Input label="Your Phone" value={formData.phone} onChangeText={(value) => updateField('phone', value)} placeholder="Your phone number" keyboardType="phone-pad" />
+        <Input label="Company Name" value={formData.company_name} onChangeText={(value) => updateField('company_name', value)} placeholder="Company name" />
+        <Input label="Contact Email" value={formData.contact_email} onChangeText={(value) => updateField('contact_email', value)} placeholder="hiring@company.com" keyboardType="email-address" autoCapitalize="none" />
+        <Input label="Contact Phone" value={formData.contact_phone} onChangeText={(value) => updateField('contact_phone', value)} placeholder="Company phone" keyboardType="phone-pad" />
+        <Input label="Location" value={formData.location} onChangeText={(value) => updateField('location', value)} placeholder="Company location" />
+        <Input label="Industry" value={formData.industry} onChangeText={(value) => updateField('industry', value)} placeholder="Technology, Finance, Healthcare" />
+        <Input label="Website" value={formData.website} onChangeText={(value) => updateField('website', value)} placeholder="https://company.com" keyboardType="url" autoCapitalize="none" />
+        <Input
+          label="Company Description"
+          value={formData.description}
+          onChangeText={(value) => updateField('description', value)}
+          placeholder="Tell applicants about the company"
+          multiline
+          numberOfLines={4}
+          textAlignVertical="top"
+          inputClassName="min-h-[120px]"
+        />
+
+        <Button title="Save Company Profile" onPress={handleSave} loading={saving} className="mt-4 mb-10" />
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+}
+
+
