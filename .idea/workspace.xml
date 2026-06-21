@@ -5,15 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5b488d2c-d28c-4c6c-b1a3-7ed4a5d5aab6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/eas.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/workflows" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(employer)/job-details.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(employer)/job-details.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(employer)/jobs.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(employer)/jobs.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(employer)/post-job.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(employer)/post-job.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appwrite/migrations/jobhub-application-upgrade-2026-06-20.js" beforeDir="false" afterPath="$PROJECT_DIR$/appwrite/migrations/jobhub-application-upgrade-2026-06-20.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/jobService.js" beforeDir="false" afterPath="$PROJECT_DIR$/services/jobService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workflows/create-production-build.yml" beforeDir="false" afterPath="$PROJECT_DIR$/create-production-build.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,23 +34,23 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.321073195438052" />
-      <entry key="MS500" value="3.0197275683070726" />
-      <entry key="S2" value="7.165258260646683" />
-      <entry key="S5" value="10.712515021649686" />
-      <entry key="S10" value="15.698517446757656" />
-      <entry key="S30" value="46.90427458703197" />
-      <entry key="S60" value="86.06163235667194" />
-      <entry key="M2" value="128.59298454125604" />
-      <entry key="M5" value="172.93496602729203" />
-      <entry key="M10" value="193.89362390116526" />
-      <entry key="M15" value="201.9279330563721" />
-      <entry key="M30" value="210.60337473152964" />
-      <entry key="H1" value="215.90656757368038" />
-      <entry key="H2" value="229.03575199193918" />
-      <entry key="H4" value="273.8309321611682" />
-      <entry key="D1" value="1106.4025325224243" />
-      <entry key="W1" value="2228.8955739442818" />
+      <entry key="MS100" value="1.1287867916847474" />
+      <entry key="MS500" value="2.17733645258055" />
+      <entry key="S2" value="5.271531521269708" />
+      <entry key="S5" value="7.51602036103121" />
+      <entry key="S10" value="8.625721754355645" />
+      <entry key="S30" value="9.817055197568095" />
+      <entry key="S60" value="13.364414189173061" />
+      <entry key="M2" value="24.81394538367986" />
+      <entry key="M5" value="55.309740763060596" />
+      <entry key="M10" value="81.47906902788289" />
+      <entry key="M15" value="97.06199572504845" />
+      <entry key="M30" value="137.89500089714062" />
+      <entry key="H1" value="208.13542181830942" />
+      <entry key="H2" value="291.0481526112115" />
+      <entry key="H4" value="384.0180922205809" />
+      <entry key="D1" value="1248.5057009540758" />
+      <entry key="W1" value="2415.82248615913" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
@@ -70,31 +64,31 @@
       <entry key="M5" value="0.0" />
       <entry key="M10" value="0.0" />
       <entry key="M15" value="0.0" />
-      <entry key="M30" value="2.203751600301495E-256" />
-      <entry key="H1" value="4.09603442343276E-128" />
-      <entry key="H2" value="5.6897605746151097E-64" />
-      <entry key="H4" value="6.736606267837926E-32" />
-      <entry key="D1" value="3.60765833984344E-5" />
-      <entry key="W1" value="1.378455832266448" />
+      <entry key="M30" value="1.5295143060562938E-257" />
+      <entry key="H1" value="1.0790934320967714E-128" />
+      <entry key="H2" value="2.9203958144872154E-64" />
+      <entry key="H4" value="4.826307934351081E-32" />
+      <entry key="D1" value="3.412618272333305E-5" />
+      <entry key="W1" value="1.3675544085321623" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.01115936533414" />
-      <entry key="MS500" value="2.848946440678047" />
-      <entry key="S2" value="7.067452195217437" />
-      <entry key="S5" value="10.654686158210412" />
-      <entry key="S10" value="15.656666925493079" />
-      <entry key="S30" value="46.86387730924256" />
-      <entry key="S60" value="86.02586294715928" />
-      <entry key="M2" value="128.5673062013926" />
-      <entry key="M5" value="172.92171785366784" />
-      <entry key="M10" value="193.88634221784767" />
-      <entry key="M15" value="201.9229154836595" />
-      <entry key="M30" value="210.60077934008075" />
-      <entry key="H1" value="215.90524128569933" />
-      <entry key="H2" value="229.03503625466922" />
-      <entry key="H4" value="273.83049018553976" />
-      <entry key="D1" value="1106.4023498037297" />
-      <entry key="W1" value="2230.273926421911" />
+      <entry key="MS100" value="1.0127441349374422" />
+      <entry key="MS500" value="2.135698301175797" />
+      <entry key="S2" value="5.247231133516165" />
+      <entry key="S5" value="7.502171454352571" />
+      <entry key="S10" value="8.617773056737521" />
+      <entry key="S30" value="9.814039868841574" />
+      <entry key="S60" value="13.362357023749242" />
+      <entry key="M2" value="24.81196256307452" />
+      <entry key="M5" value="55.30781804086728" />
+      <entry key="M10" value="81.47750472810942" />
+      <entry key="M15" value="97.0605155698043" />
+      <entry key="M30" value="137.89339758721297" />
+      <entry key="H1" value="208.1338863551942" />
+      <entry key="H2" value="291.0469878368506" />
+      <entry key="H4" value="384.01730921394113" />
+      <entry key="D1" value="1248.5054391912843" />
+      <entry key="W1" value="2417.1899250263887" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -106,39 +100,42 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Node.js.[id].js.executor": "Run",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "javascript.preferred.runtime.type.id": "node",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "C:/Users/Hikary/Desktop/jobhub/jobhubcodebase/jobhub/app/(tabs)",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "onboarding.tips.debug.path": "C:/Users/Hikary/Desktop/jobhub/jobhubcodebase/src/main.js",
-    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\Hikary\\Desktop\\jobhub\\jobhubcodebase\\node_modules\\prettier",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "ml.llm.AcpAgentsConfigurable",
-    "to.speed.mode.migration.done": "true",
-    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\WebStorm 2026.1.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Node.js.[id].js.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Hikary/Desktop/jobhub/jobhubcodebase/jobhub/app/(tabs)&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/Hikary/Desktop/jobhub/jobhubcodebase/src/main.js&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;C:\\Users\\Hikary\\Desktop\\jobhub\\jobhubcodebase\\node_modules\\prettier&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;ml.llm.AcpAgentsConfigurable&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\WebStorm 2026.1.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Hikary\Desktop\jobhub\jobhubcodebase\jobhub\app\(tabs)" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Hikary\Desktop\jobhub\jobhubcodebase" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -166,7 +163,7 @@
       <workItem from="1780753207707" duration="7644000" />
       <workItem from="1781523406829" duration="302000" />
       <workItem from="1781524336683" duration="36930000" />
-      <workItem from="1781968265260" duration="30353000" />
+      <workItem from="1781968265260" duration="34293000" />
     </task>
     <servers />
   </component>

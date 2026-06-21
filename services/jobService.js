@@ -25,6 +25,36 @@ const isMissingLegacyPremiumError = (error) => {
   return message.includes('missing required attribute') && message.includes('is_premium');
 };
 
+const getUnknownAttributeName = (error) => {
+  const match = String(error?.message || '').match(/Unknown attribute:\s*"?([^"\n]+)"?/i);
+  return match?.[1] || '';
+};
+
+const writeJobDocumentWithSchemaFallback = async (payload, writeDocument) => {
+  const data = { ...payload };
+  const skippedAttributes = new Set();
+
+  while (true) {
+    try {
+      const document = await writeDocument(data);
+      if (skippedAttributes.size > 0) {
+        console.warn(
+          `Saved job without unsupported Appwrite attributes: ${Array.from(skippedAttributes).join(', ')}. Run the Appwrite migration to persist these fields.`
+        );
+      }
+      return document;
+    } catch (error) {
+      const unknownAttribute = getUnknownAttributeName(error);
+      if (!unknownAttribute || !(unknownAttribute in data) || skippedAttributes.has(unknownAttribute)) {
+        throw error;
+      }
+
+      skippedAttributes.add(unknownAttribute);
+      delete data[unknownAttribute];
+    }
+  }
+};
+
 const uniqueDocuments = (documents) => {
   const map = new Map();
   documents.forEach((document) => {
@@ -387,14 +417,18 @@ export const jobService = {
       Permission.delete(Role.user(employerId)),
     ];
     const jobPayload = buildEditableJobPayload(employerId, jobData, { includeIdentity: true, jobId });
+    const createJobDocument = (payload) =>
+      writeJobDocumentWithSchemaFallback(payload, (data) =>
+        databases.createDocument(DATABASE_ID, 'job_postings', jobId, data, permissions)
+      );
 
-    const created = await databases.createDocument(DATABASE_ID, 'job_postings', jobId, jobPayload, permissions)
+    const created = await createJobDocument(jobPayload)
       .catch((error) => {
         if (!isMissingLegacyPremiumError(error)) throw error;
-        return databases.createDocument(DATABASE_ID, 'job_postings', jobId, {
+        return createJobDocument({
           ...jobPayload,
           is_premium: false,
-        }, permissions);
+        });
       });
 
     await saveAutomaticMessage(employerId, created.$id, jobData).catch((error) =>
@@ -443,11 +477,9 @@ export const jobService = {
       throw new Error('Only the employer who posted this job can edit it.');
     }
 
-    const updated = await databases.updateDocument(
-      DATABASE_ID,
-      'job_postings',
-      jobId,
-      buildEditableJobPayload(employerId, jobData)
+    const updated = await writeJobDocumentWithSchemaFallback(
+      buildEditableJobPayload(employerId, jobData),
+      (data) => databases.updateDocument(DATABASE_ID, 'job_postings', jobId, data)
     );
 
     await saveAutomaticMessage(employerId, updated.$id, jobData).catch((error) =>
