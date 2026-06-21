@@ -86,7 +86,7 @@ export default function NotificationsScreen() {
           <View className="px-6 pt-12 pb-4">
             <View className="flex-row items-center justify-between mb-5">
               <View className="flex-row items-center flex-1 mr-4">
-                <TouchableOpacity onPress={() => router.back()} className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder p-2 rounded-xl mr-4">
+                <TouchableOpacity activeOpacity={0.92} onPress={() => router.back()} className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder p-2 rounded-xl mr-4">
                   <ChevronLeft size={24} color="#2563EB" />
                 </TouchableOpacity>
                 <View>
@@ -94,14 +94,14 @@ export default function NotificationsScreen() {
                   <Text className="text-secondaryText dark:text-darkMuted">Updates about jobs and applications.</Text>
                 </View>
               </View>
-              <TouchableOpacity onPress={markAllRead} className="bg-blue-100 dark:bg-darkSurface2 p-3 rounded-2xl">
+              <TouchableOpacity activeOpacity={0.92} onPress={markAllRead} className="bg-blue-100 dark:bg-darkSurface2 p-3 rounded-2xl">
                 <CheckCheck size={20} color="#2563EB" />
               </TouchableOpacity>
             </View>
           </View>
         }
         renderItem={({ item }) => (
-          <TouchableOpacity
+          <TouchableOpacity activeOpacity={0.92}
             onPress={() => markNotificationRead(item)}
             className="mx-6 mb-3 bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-3xl p-5 flex-row"
           >

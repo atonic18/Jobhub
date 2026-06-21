@@ -1,0 +1,32 @@
+[
+    {
+        "$id": "sendMessage",
+        "name": "JobHub Router and Messaging",
+        "enabled": true,
+        "logging": true,
+        "runtime": "node-22",
+        "execute": ["users"],
+        "events": [],
+        "schedule": "",
+        "timeout": 120,
+        "entrypoint": "sendMessage/index.js",
+        "commands": "npm install",
+        "scopes": ["databases.read", "databases.write", "files.read", "files.write"],
+        "path": "functions"
+    },
+    {
+        "$id": "updateApplicationStatus",
+        "name": "Update Application Status",
+        "enabled": true,
+        "logging": true,
+        "runtime": "node-22",
+        "execute": ["users"],
+        "events": [],
+        "schedule": "",
+        "timeout": 60,
+        "entrypoint": "updateApplicationStatus/index.js",
+        "commands": "npm install",
+        "scopes": ["databases.read", "databases.write", "files.read", "files.write"],
+        "path": "functions"
+    }
+]

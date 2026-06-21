@@ -4,7 +4,7 @@ import { fileService } from './fileService';
 
 const DATABASE_ID = 'jobhub_db';
 const DOCUMENTS_COLLECTION = 'employee_documents';
-const PROCESS_DOCUMENT_FUNCTION_ID = 'processEmployeeDocument';
+const JOBHUB_ROUTER_FUNCTION_ID = 'sendMessage';
 
 const ownerPermissions = (userId) => [
   Permission.read(Role.user(userId)),
@@ -22,11 +22,27 @@ const parseExecutionBody = (execution) => {
   }
 };
 
+const getScanStartErrorMessage = (error) => {
+  const message = String(error?.message || '');
+  if (error?.code === 404 || message.toLowerCase().includes('function with the requested id could not be found')) {
+    return 'Document scanner is not deployed yet.';
+  }
+  return message || 'Document scan could not be started.';
+};
+
+const markScanStartFailed = async (documentId, message) => {
+  if (!documentId) return;
+  await databases.updateDocument(DATABASE_ID, DOCUMENTS_COLLECTION, documentId, {
+    scan_status: 'failed',
+    scan_error: message,
+  }).catch(() => null);
+};
+
 const triggerDocumentScan = async (documentId) => {
   try {
     const execution = await functions.createExecution(
-      PROCESS_DOCUMENT_FUNCTION_ID,
-      JSON.stringify({ documentId }),
+      JOBHUB_ROUTER_FUNCTION_ID,
+      JSON.stringify({ action: 'processEmployeeDocument', documentId }),
       false
     );
     const body = parseExecutionBody(execution);
@@ -35,7 +51,9 @@ const triggerDocumentScan = async (documentId) => {
     }
     return body;
   } catch (error) {
-    console.error('Document scan could not be started:', error.message);
+    const message = getScanStartErrorMessage(error);
+    await markScanStartFailed(documentId, message);
+    console.warn('Document scan could not be started:', message);
     return null;
   }
 };

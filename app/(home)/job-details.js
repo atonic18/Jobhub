@@ -206,7 +206,7 @@ export default function JobDetails() {
     <View className="flex-1 bg-background dark:bg-darkBg">
       <View className="px-6 pt-12 flex-row items-center justify-between mb-6">
         <View className="flex-row items-center">
-          <TouchableOpacity
+          <TouchableOpacity activeOpacity={0.92}
             onPress={() => router.back()}
             className="bg-white dark:bg-darkSurface p-2 rounded-xl shadow-sm border border-gray-100 dark:border-darkBorder mr-4"
           >
@@ -214,7 +214,7 @@ export default function JobDetails() {
           </TouchableOpacity>
           <Text className="text-text dark:text-darkText text-xl font-bold">Job Details</Text>
         </View>
-        <TouchableOpacity
+        <TouchableOpacity activeOpacity={0.92}
           onPress={handleSave}
           disabled={saving}
           className="bg-white dark:bg-darkSurface p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-darkBorder"
@@ -297,7 +297,7 @@ export default function JobDetails() {
                   {acceptanceAttachments.map((attachmentValue, index) => {
                     const attachment = fileService.parseFileReference(attachmentValue);
                     return (
-                      <TouchableOpacity
+                      <TouchableOpacity activeOpacity={0.92}
                         key={`${attachment?.fileId || index}`}
                         onPress={() => openAttachment(attachmentValue)}
                         className="bg-gray-50 dark:bg-darkSurface2 rounded-2xl p-3 mb-2 flex-row items-center"
@@ -339,7 +339,7 @@ export default function JobDetails() {
           <View className="bg-white dark:bg-darkSurface rounded-t-3xl px-6 pt-6 pb-10">
             <View className="flex-row items-center justify-between mb-5">
               <Text className="text-text dark:text-darkText text-xl font-bold">Apply for Job</Text>
-              <TouchableOpacity onPress={() => setApplyVisible(false)} className="p-2">
+              <TouchableOpacity activeOpacity={0.92} onPress={() => setApplyVisible(false)} className="p-2">
                 <X size={22} color="#64748B" />
               </TouchableOpacity>
             </View>
@@ -367,7 +367,7 @@ export default function JobDetails() {
             <View className="mb-4">
               <View className="flex-row items-center justify-between mb-2">
                 <Text className="text-text dark:text-darkText font-bold">Documents to Share</Text>
-                <TouchableOpacity onPress={() => router.push('/(profile)/edit-profile')} className="flex-row items-center">
+                <TouchableOpacity activeOpacity={0.92} onPress={() => router.push('/(profile)/edit-profile')} className="flex-row items-center">
                   <Paperclip size={16} color="#2563EB" />
                   <Text className="text-primary font-bold ml-1">Manage</Text>
                 </TouchableOpacity>
@@ -380,7 +380,7 @@ export default function JobDetails() {
                 employeeDocuments.map((document) => {
                   const selected = selectedDocumentIds.has(document.$id);
                   return (
-                    <TouchableOpacity
+                    <TouchableOpacity activeOpacity={0.92}
                       key={document.$id}
                       onPress={() => {
                         const next = new Set(selectedDocumentIds);

@@ -1,5 +1,8 @@
 {
     "projectId": "1212125",
     "projectName": "JobHub",
-    "endpoint": "https://sfo.cloud.appwrite.io/v1"
+    "endpoint": "https://sfo.cloud.appwrite.io/v1",
+    "includes": {
+        "functions": "appwrite/functions.json"
+    }
 }

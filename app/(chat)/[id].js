@@ -166,7 +166,7 @@ export default function ChatScreen() {
       className="flex-1 bg-background dark:bg-darkBg"
     >
       <View className="px-6 pt-12 pb-4 bg-white dark:bg-darkSurface border-b border-gray-100 dark:border-darkBorder flex-row items-center">
-        <TouchableOpacity onPress={() => router.back()} className="mr-4">
+        <TouchableOpacity activeOpacity={0.92} onPress={() => router.back()} className="mr-4">
           <ChevronLeft size={24} color="#2563EB" />
         </TouchableOpacity>
         <View className="flex-1 flex-row items-center">
@@ -176,7 +176,7 @@ export default function ChatScreen() {
             <Text className="text-secondaryText dark:text-darkMuted text-xs" numberOfLines={1}>{participantSubtitle}</Text>
           </View>
         </View>
-        <TouchableOpacity onPress={showConversationActions}>
+        <TouchableOpacity activeOpacity={0.92} onPress={showConversationActions}>
           <MoreVertical size={20} color="#64748B" />
         </TouchableOpacity>
       </View>
@@ -201,7 +201,7 @@ export default function ChatScreen() {
                     {item.content}
                   </Text>
                   {item.attachment_url ? (
-                    <TouchableOpacity
+                    <TouchableOpacity activeOpacity={0.92}
                       onPress={() => openAttachment(item.attachment_url)}
                       className={`${isMe ? 'bg-white/20' : 'bg-gray-100 dark:bg-darkSurface2'} rounded-2xl p-3 mt-2 flex-row items-center`}
                     >
@@ -233,13 +233,13 @@ export default function ChatScreen() {
           <View className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-2xl p-3 mb-2 flex-row items-center">
             <FileText size={18} color="#2563EB" />
             <Text className="text-secondaryText dark:text-darkMuted ml-3 flex-1" numberOfLines={1}>{attachment.name}</Text>
-            <TouchableOpacity onPress={() => setAttachment(null)}>
+            <TouchableOpacity activeOpacity={0.92} onPress={() => setAttachment(null)}>
               <Text className="text-red-500 font-bold">Remove</Text>
             </TouchableOpacity>
           </View>
         ) : null}
         <View className="p-4 bg-white dark:bg-darkSurface border-t border-gray-100 dark:border-darkBorder flex-row items-center rounded-3xl shadow-sm">
-          <TouchableOpacity onPress={pickAttachment} disabled={uploading} className="p-2">
+          <TouchableOpacity activeOpacity={0.92} onPress={pickAttachment} disabled={uploading} className="p-2">
             <Paperclip size={20} color={uploading ? '#94A3B8' : '#2563EB'} />
           </TouchableOpacity>
           <TextInput
@@ -249,7 +249,7 @@ export default function ChatScreen() {
             onChangeText={setMessage}
             className="flex-1 px-4 py-2 text-text dark:text-darkText"
           />
-          <TouchableOpacity
+          <TouchableOpacity activeOpacity={0.92}
             onPress={handleSend}
             disabled={(!message.trim() && !attachment) || sending}
             className={`bg-primary p-3 rounded-2xl ml-2 ${((!message.trim() && !attachment) || sending) ? 'opacity-60' : ''}`}

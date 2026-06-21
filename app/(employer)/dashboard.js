@@ -61,7 +61,7 @@ export default function EmployerDashboard() {
       const response = await jobService.getEmployerJobs(userId, { includeClosed: false });
       const employerJobs = response.documents;
       setMyJobs(employerJobs);
-      
+
       // Fetch applicants for all my jobs
       let applicantCount = 0;
       for (const job of employerJobs) {
@@ -100,7 +100,7 @@ export default function EmployerDashboard() {
   );
 
   return (
-    <ScrollView 
+    <ScrollView
       className="flex-1 bg-background dark:bg-darkBg px-6 pt-12"
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} color="#2563EB" />
@@ -112,7 +112,7 @@ export default function EmployerDashboard() {
           <Text className="text-text dark:text-darkText text-2xl font-bold">{user?.full_name || user?.name}</Text>
         </View>
         <View className="flex-row">
-          <TouchableOpacity
+          <TouchableOpacity activeOpacity={0.92}
             onPress={() => router.push('/(employer)/notifications')}
             className="bg-white dark:bg-darkSurface p-3 rounded-2xl border border-gray-100 dark:border-darkBorder mr-3"
           >
@@ -123,7 +123,7 @@ export default function EmployerDashboard() {
               </View>
             ) : null}
           </TouchableOpacity>
-          <TouchableOpacity
+          <TouchableOpacity activeOpacity={0.92}
             onPress={handleLogout}
             className="bg-red-50 p-3 rounded-2xl"
           >
@@ -133,21 +133,21 @@ export default function EmployerDashboard() {
       </View>
 
       <View className="flex-row mb-6">
-        <StatCard 
-          title="Total Jobs" 
-          value={stats.totalJobs} 
-          icon={<Briefcase size={24} color="#2563EB" />} 
+        <StatCard
+          title="Total Jobs"
+          value={stats.totalJobs}
+          icon={<Briefcase size={24} color="#2563EB" />}
           color="bg-blue-50"
         />
-        <StatCard 
-          title="Applicants" 
-          value={stats.totalApplicants} 
-          icon={<Users size={24} color="#8B5CF6" />} 
+        <StatCard
+          title="Applicants"
+          value={stats.totalApplicants}
+          icon={<Users size={24} color="#8B5CF6" />}
           color="bg-purple-50"
         />
       </View>
 
-      <TouchableOpacity 
+      <TouchableOpacity activeOpacity={0.92}
         onPress={() => router.push('/(employer)/post-job')}
         className="bg-primary p-6 rounded-3xl flex-row items-center justify-between mb-8 shadow-lg shadow-blue-200"
       >
@@ -162,7 +162,7 @@ export default function EmployerDashboard() {
 
       <View className="flex-row justify-between items-center mb-4">
         <Text className="text-text dark:text-darkText text-xl font-bold">Active Postings</Text>
-        <TouchableOpacity onPress={() => router.push('/(employer)/jobs')}>
+        <TouchableOpacity activeOpacity={0.92} onPress={() => router.push('/(employer)/jobs')}>
           <Text className="text-primary font-bold">Manage</Text>
         </TouchableOpacity>
       </View>
@@ -175,7 +175,7 @@ export default function EmployerDashboard() {
       ) : (
         <View className="mb-10">
           {myJobs.map((job) => (
-            <TouchableOpacity
+            <TouchableOpacity activeOpacity={0.92}
               key={job.$id}
               onPress={() => router.push({ pathname: '/(employer)/job-details', params: { id: job.$id } })}
               className="bg-white dark:bg-darkSurface p-5 rounded-3xl shadow-sm border border-gray-100 dark:border-darkBorder mb-4"

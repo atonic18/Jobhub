@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { Logo } from '../../components/ui/Logo';
+import { PressableSurface } from '../../components/ui/PressableSurface';
 import { useAuth } from '../../context/AuthContext';
 
 export default function Register() {
@@ -66,18 +67,26 @@ export default function Register() {
           Account Type: {formData.role === 'employer' ? 'Employer' : 'Job Seeker'}
         </Text>
         <View className="flex-row mb-3 bg-gray-100 dark:bg-darkSurface2 p-1 rounded-2xl">
-          <TouchableOpacity 
-            className={`flex-1 py-3 rounded-xl ${formData.role === 'employee' ? 'bg-white dark:bg-darkSurface' : ''}`}
+          <PressableSurface
+            className={`flex-1 py-3 rounded-xl border ${formData.role === 'employee' ? 'bg-primary border-primary' : 'bg-white/70 dark:bg-darkSurface border-transparent'}`}
             onPress={() => setFormData({...formData, role: 'employee'})}
+            shadow={formData.role === 'employee'}
+            pressedStyle={{ backgroundColor: '#3B82F6', borderColor: '#3B82F6' }}
           >
-            <Text className={`text-center font-bold ${formData.role === 'employee' ? 'text-primary' : 'text-secondaryText dark:text-darkMuted'}`}>Job Seeker</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            className={`flex-1 py-3 rounded-xl ${formData.role === 'employer' ? 'bg-white dark:bg-darkSurface' : ''}`}
+            {({ pressed }) => (
+              <Text className={`text-center font-bold ${formData.role === 'employee' || pressed ? 'text-white' : 'text-secondaryText dark:text-darkMuted'}`}>Job Seeker</Text>
+            )}
+          </PressableSurface>
+          <PressableSurface
+            className={`flex-1 py-3 rounded-xl border ${formData.role === 'employer' ? 'bg-primary border-primary' : 'bg-white/70 dark:bg-darkSurface border-transparent'}`}
             onPress={() => setFormData({...formData, role: 'employer'})}
+            shadow={formData.role === 'employer'}
+            pressedStyle={{ backgroundColor: '#3B82F6', borderColor: '#3B82F6' }}
           >
-            <Text className={`text-center font-bold ${formData.role === 'employer' ? 'text-primary' : 'text-secondaryText dark:text-darkMuted'}`}>Employer</Text>
-          </TouchableOpacity>
+            {({ pressed }) => (
+              <Text className={`text-center font-bold ${formData.role === 'employer' || pressed ? 'text-white' : 'text-secondaryText dark:text-darkMuted'}`}>Employer</Text>
+            )}
+          </PressableSurface>
         </View>
         <Text className="text-secondaryText dark:text-darkMuted mb-6 ml-1">
           {formData.role === 'employer'
@@ -125,7 +134,7 @@ export default function Register() {
 
         <View className="flex-row justify-center">
           <Text className="text-secondaryText dark:text-darkMuted">Already have an account? </Text>
-          <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
+          <TouchableOpacity activeOpacity={0.92} onPress={() => router.push('/(auth)/login')}>
             <Text className="text-primary font-bold">Login</Text>
           </TouchableOpacity>
         </View>

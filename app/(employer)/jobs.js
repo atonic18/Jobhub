@@ -70,13 +70,13 @@ export default function EmployerJobs() {
             </Text>
           </View>
           <View className="flex-row">
-            <TouchableOpacity
+            <TouchableOpacity activeOpacity={0.92}
               onPress={onRefresh}
               className="bg-white dark:bg-darkSurface p-3 rounded-2xl border border-gray-100 dark:border-darkBorder mr-2"
             >
               <RefreshCw size={20} color="#2563EB" />
             </TouchableOpacity>
-            <TouchableOpacity
+            <TouchableOpacity activeOpacity={0.92}
               onPress={() => router.push('/(employer)/post-job')}
               className="bg-primary p-3 rounded-2xl"
             >
@@ -96,7 +96,7 @@ export default function EmployerJobs() {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#2563EB" colors={['#2563EB']} />
           }
           renderItem={({ item }) => (
-            <TouchableOpacity
+            <TouchableOpacity activeOpacity={0.92}
               onPress={() => router.push({ pathname: '/(employer)/job-details', params: { id: item.$id } })}
               className="bg-white dark:bg-darkSurface mx-6 mb-4 p-5 rounded-3xl border border-gray-100 dark:border-darkBorder"
             >
@@ -119,7 +119,7 @@ export default function EmployerJobs() {
                   </View>
                 </View>
                 <View className="items-end">
-                  <TouchableOpacity
+                  <TouchableOpacity activeOpacity={0.92}
                     onPress={(event) => {
                       event?.stopPropagation?.();
                       confirmDeleteJob(item);

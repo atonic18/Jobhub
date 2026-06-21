@@ -1,6 +1,7 @@
 const { Client, Databases, ID, Permission, Query, Role, Storage } = require('node-appwrite');
 const onApplicationSubmitted = require('../onApplicationSubmitted/index.js');
 const onJobPostCreated = require('../onJobPostCreated/index.js');
+const processEmployeeDocument = require('../processEmployeeDocument/index.js');
 const { acceptedStatuses, grantAttachmentAccess } = require('../shared/applicationWorkflow.js');
 
 const parseBody = (req) => {
@@ -77,6 +78,10 @@ module.exports = async (context) => {
       error(err.message);
       return res.json({ success: false, error: err.message }, 500);
     }
+  }
+
+  if (body.action === 'processEmployeeDocument') {
+    return processEmployeeDocument(context);
   }
 
   if ((body.$id || body.job_id) && body.title && (body.employer_id || body.user_id) && !body.conversationId && !body.conversation_id) {

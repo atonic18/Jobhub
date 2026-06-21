@@ -1,9 +1,10 @@
-const { Client, Databases, Storage, Query } = require('node-appwrite');
+const { Client, Databases, Storage, Query, Permission, Role } = require('node-appwrite');
 const {
   APPLICATION_STATUSES,
   acceptedStatuses,
   createNotification,
   evaluateApplicantMatch,
+  grantAttachmentAccess,
   parseArray,
   sendAcceptancePackage,
 } = require('../shared/applicationWorkflow.js');
@@ -77,6 +78,41 @@ const updateJobCounts = async (databases, databaseId, jobId) => {
   return applications;
 };
 
+const applicationPermissions = (application, employerId) => Array.from(new Set([
+  ...(application.$permissions || []),
+  Permission.read(Role.user(application.user_id)),
+  Permission.update(Role.user(application.user_id)),
+  Permission.delete(Role.user(application.user_id)),
+  ...(employerId ? [Permission.read(Role.user(employerId))] : []),
+]));
+
+const grantEmployerAccess = async ({ databases, storage, databaseId, application, employerId }) => {
+  if (!application?.$id || !application?.user_id || !employerId) return application;
+
+  const updated = await databases.updateDocument(
+    databaseId,
+    'applications',
+    application.$id,
+    {},
+    applicationPermissions(application, employerId)
+  );
+
+  const documents = parseArray(application.applied_documents).length > 0
+    ? parseArray(application.applied_documents)
+    : parseArray(application.documents);
+
+  await Promise.all(documents.map((document) =>
+    grantAttachmentAccess({
+      storage,
+      attachment: document,
+      ownerId: application.user_id,
+      readerIds: [employerId],
+    })
+  ));
+
+  return updated;
+};
+
 module.exports = async ({ req, res, log, error }) => {
   const applicationPayload = parseBody(req);
   const databaseId = process.env.APPWRITE_DATABASE_ID || 'jobhub_db';
@@ -97,6 +133,8 @@ module.exports = async ({ req, res, log, error }) => {
     const employeeProfile = await getEmployeeProfile(databases, databaseId, application.user_id);
     const employeeDocuments = await getEmployeeDocuments(databases, databaseId, application.user_id);
     const applicantName = applicant?.full_name || 'An applicant';
+
+    application = await grantEmployerAccess({ databases, storage, databaseId, application, employerId });
 
     await updateJobCounts(databases, databaseId, job.$id);
 

@@ -75,8 +75,8 @@ export default function Login() {
           onChangeText={setPassword}
           secureTextEntry
         />
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity activeOpacity={0.92}
           className="items-end mb-8"
           onPress={handleForgotPassword}
           disabled={loading}
@@ -84,16 +84,16 @@ export default function Login() {
           <Text className="text-primary font-semibold">Forgot Password?</Text>
         </TouchableOpacity>
 
-        <Button 
-          title="Login" 
-          onPress={handleLogin} 
+        <Button
+          title="Login"
+          onPress={handleLogin}
           loading={loading}
           className="mb-6"
         />
 
         <View className="flex-row justify-center">
           <Text className="text-secondaryText dark:text-darkMuted">Don't have an account? </Text>
-          <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
+          <TouchableOpacity activeOpacity={0.92} onPress={() => router.push('/(auth)/register')}>
             <Text className="text-primary font-bold">Register</Text>
           </TouchableOpacity>
         </View>

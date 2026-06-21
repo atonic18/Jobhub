@@ -87,7 +87,7 @@ export default function AppliedJobsScreen() {
           const job = item.job;
           const isUnavailable = !job || job.is_active === false;
           return (
-            <TouchableOpacity
+            <TouchableOpacity activeOpacity={0.92}
               onPress={() => job && router.push({ pathname: '/(home)/job-details', params: { id: job.$id } })}
               disabled={!job}
               className="mx-6 mb-4 bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-3xl p-5"
@@ -114,7 +114,7 @@ export default function AppliedJobsScreen() {
                       <Text className="text-primary text-xs font-bold">{getApplicationStatusLabel(item.status)}</Text>
                     </View>
                     {isUnavailable ? (
-                      <TouchableOpacity
+                      <TouchableOpacity activeOpacity={0.92}
                         onPress={() => removeUnavailableApplication(item)}
                         disabled={removingId === item.$id}
                         className={`bg-red-50 dark:bg-darkSurface2 px-3 py-2 rounded-xl flex-row items-center ${removingId === item.$id ? 'opacity-60' : ''}`}
@@ -137,7 +137,7 @@ export default function AppliedJobsScreen() {
             <Briefcase size={42} color="#2563EB" />
             <Text className="text-text dark:text-darkText font-bold text-xl mt-4">No applications yet</Text>
             <Text className="text-secondaryText dark:text-darkMuted text-center mt-2 mb-6">Apply to a job and it will appear here with its current status.</Text>
-            <TouchableOpacity onPress={() => router.push('/(home)/search')} className="bg-primary px-6 py-4 rounded-2xl">
+            <TouchableOpacity activeOpacity={0.92} onPress={() => router.push('/(home)/search')} className="bg-primary px-6 py-4 rounded-2xl">
               <Text className="text-white font-bold">Browse Jobs</Text>
             </TouchableOpacity>
           </View>

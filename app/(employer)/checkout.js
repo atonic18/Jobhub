@@ -10,7 +10,7 @@ export default function Checkout() {
   return (
     <View className="flex-1 bg-background dark:bg-darkBg px-6 pt-12">
       <View className="flex-row items-center mb-8">
-        <TouchableOpacity onPress={() => router.back()} className="mr-4">
+        <TouchableOpacity activeOpacity={0.92} onPress={() => router.back()} className="mr-4">
           <ChevronLeft size={24} color="#0F172A" />
         </TouchableOpacity>
         <Text className="text-text dark:text-darkText text-xl font-bold">Checkout Disabled</Text>

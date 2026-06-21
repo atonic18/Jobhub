@@ -15,6 +15,7 @@ import {
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Bookmark, Search, SlidersHorizontal, X } from 'lucide-react-native';
 import { JobCard } from '../../components/cards/JobCard';
+import { PressableSurface } from '../../components/ui/PressableSurface';
 import { jobService } from '../../services/jobService';
 import { useAuth } from '../../context/AuthContext';
 import { getUserId, JOB_DEPARTMENTS, jobMatchesDepartment, jobMatchesSearch } from '../../utils/jobUtils';
@@ -124,14 +125,18 @@ export default function SearchScreen() {
   };
 
   const FilterChip = ({ label, selected, onPress }) => (
-    <TouchableOpacity
+    <PressableSurface
       onPress={onPress}
       className={`${selected ? 'bg-primary border-primary' : 'bg-white dark:bg-darkSurface border-gray-200 dark:border-darkBorder'} border px-4 py-2 rounded-2xl mr-2 mb-2`}
+      shadow={false}
+      pressedStyle={selected ? { backgroundColor: '#1D4ED8', borderColor: '#1D4ED8' } : { backgroundColor: '#EFF6FF', borderColor: '#BFDBFE' }}
     >
-      <Text className={`${selected ? 'text-white' : 'text-secondaryText dark:text-darkMuted'} font-bold capitalize`}>
-        {label}
-      </Text>
-    </TouchableOpacity>
+      {({ pressed }) => (
+        <Text className={`${selected ? 'text-white' : pressed ? 'text-primary' : 'text-secondaryText dark:text-darkMuted'} font-bold capitalize`}>
+          {label}
+        </Text>
+      )}
+    </PressableSurface>
   );
 
   return (
@@ -145,7 +150,7 @@ export default function SearchScreen() {
             <Text className="text-text dark:text-darkText text-2xl font-bold">Search Jobs</Text>
             <Text className="text-secondaryText dark:text-darkMuted">Find roles by title, location, type, or department.</Text>
           </View>
-          <TouchableOpacity
+          <TouchableOpacity activeOpacity={0.92}
             onPress={() => router.push('/(home)/saved')}
             className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder p-3 rounded-2xl"
           >
@@ -164,11 +169,11 @@ export default function SearchScreen() {
             returnKeyType="search"
           />
           {query ? (
-            <TouchableOpacity onPress={() => setQuery('')} className="p-1 mr-2">
+            <TouchableOpacity activeOpacity={0.92} onPress={() => setQuery('')} className="p-1 mr-2">
               <X size={18} color="#64748B" />
             </TouchableOpacity>
           ) : null}
-          <TouchableOpacity onPress={() => setFilterVisible(true)} className="p-1">
+          <TouchableOpacity activeOpacity={0.92} onPress={() => setFilterVisible(true)} className="p-1">
             <SlidersHorizontal size={20} color="#2563EB" />
           </TouchableOpacity>
         </View>
@@ -196,7 +201,7 @@ export default function SearchScreen() {
             {filteredJobs.length} {filteredJobs.length === 1 ? 'result' : 'results'}
           </Text>
           {activeFilterCount || query ? (
-            <TouchableOpacity onPress={clearFilters}>
+            <TouchableOpacity activeOpacity={0.92} onPress={clearFilters}>
               <Text className="text-primary font-bold">Clear</Text>
             </TouchableOpacity>
           ) : null}
@@ -246,7 +251,7 @@ export default function SearchScreen() {
           <View className="bg-white dark:bg-darkSurface rounded-t-3xl px-6 pt-6 pb-10">
             <View className="flex-row justify-between items-center mb-6">
               <Text className="text-text dark:text-darkText text-xl font-bold">Filters</Text>
-              <TouchableOpacity onPress={() => setFilterVisible(false)} className="p-2">
+              <TouchableOpacity activeOpacity={0.92} onPress={() => setFilterVisible(false)} className="p-2">
                 <X size={22} color="#64748B" />
               </TouchableOpacity>
             </View>
@@ -288,13 +293,13 @@ export default function SearchScreen() {
             </View>
 
             <View className="flex-row mt-6">
-              <TouchableOpacity
+              <TouchableOpacity activeOpacity={0.92}
                 onPress={clearFilters}
                 className="flex-1 py-4 rounded-2xl border border-gray-200 dark:border-darkBorder mr-3 items-center"
               >
                 <Text className="text-secondaryText dark:text-darkMuted font-bold">Reset</Text>
               </TouchableOpacity>
-              <TouchableOpacity
+              <TouchableOpacity activeOpacity={0.92}
                 onPress={() => setFilterVisible(false)}
                 className="flex-1 py-4 rounded-2xl bg-primary items-center"
               >

@@ -76,10 +76,15 @@ const extractImageText = async (buffer) => {
 module.exports = async ({ req, res, error }) => {
   const { documentId } = parseBody(req);
   const databaseId = process.env.APPWRITE_DATABASE_ID || 'jobhub_db';
+  const callerId = req.headers['x-appwrite-user-id'];
   const { databases, storage } = getClient();
 
   try {
     const document = await getDocumentById(databases, databaseId, documentId);
+    if (!callerId || document.user_id !== callerId) {
+      return res.json({ success: false, error: 'You can only scan your own uploaded documents.' }, 403);
+    }
+
     await databases.updateDocument(databaseId, 'employee_documents', document.$id, {
       scan_status: 'processing',
       scan_error: '',

@@ -57,7 +57,7 @@ export default function SavedJobsScreen() {
         ListHeaderComponent={
           <View className="px-6 pt-12 pb-4">
             <View className="flex-row items-center mb-5">
-              <TouchableOpacity onPress={() => router.back()} className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder p-2 rounded-xl mr-4">
+              <TouchableOpacity activeOpacity={0.92} onPress={() => router.back()} className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder p-2 rounded-xl mr-4">
                 <ChevronLeft size={24} color="#2563EB" />
               </TouchableOpacity>
               <View>
@@ -88,7 +88,7 @@ export default function SavedJobsScreen() {
               <Bookmark size={42} color="#2563EB" />
               <Text className="text-text dark:text-darkText font-bold text-xl mt-4">No saved jobs yet</Text>
               <Text className="text-secondaryText dark:text-darkMuted text-center mt-2 mb-6">Tap the bookmark on any job card to save it here.</Text>
-              <TouchableOpacity onPress={() => router.push('/(home)/search')} className="bg-primary px-6 py-4 rounded-2xl">
+              <TouchableOpacity activeOpacity={0.92} onPress={() => router.push('/(home)/search')} className="bg-primary px-6 py-4 rounded-2xl">
                 <Text className="text-white font-bold">Find Jobs</Text>
               </TouchableOpacity>
             </View>

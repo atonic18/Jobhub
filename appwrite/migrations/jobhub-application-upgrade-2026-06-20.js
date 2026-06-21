@@ -88,6 +88,24 @@ const updateEnum = async (collectionId, key, values, required = false, defaultVa
   }
 };
 
+const makeLegacyBooleanOptional = async (collectionId, key, defaultValue = false) => {
+  try {
+    const attribute = await databases.getAttribute(databaseId, collectionId, key);
+    if (attribute.type !== 'boolean') {
+      console.log(`skipped boolean update ${collectionId}.${key}: attribute is ${attribute.type}`);
+      return;
+    }
+    if (attribute.required === false && attribute.default === defaultValue) {
+      console.log(`skipped boolean update ${collectionId}.${key}: already optional`);
+      return;
+    }
+    await databases.updateBooleanAttribute(databaseId, collectionId, key, false, defaultValue);
+    console.log(`updated boolean: ${collectionId}.${key}`);
+  } catch (error) {
+    console.log(`skipped boolean update ${collectionId}.${key}: ${error.message}`);
+  }
+};
+
 const createIndex = async (collectionId, key, type, attributes) => {
   try {
     await databases.createIndex(databaseId, collectionId, key, type, attributes);
@@ -186,6 +204,7 @@ const run = async () => {
   await createString('job_postings', 'interview_time', 50);
   await createString('job_postings', 'interview_location', 1000);
   await createBoolean('job_postings', 'auto_accept_enabled', false, false);
+  await makeLegacyBooleanOptional('job_postings', 'is_premium', false);
 
   await normalizeOldApplicationStatuses();
   await updateEnum('applications', 'status', ['pending', 'accepted', 'needs_review', 'interview_scheduled', 'rejected'], true);

@@ -20,6 +20,11 @@ const isAuthorizationError = (error) => {
   return error?.code === 401 || error?.code === 403 || message.includes('not authorized') || message.includes('unauthorized');
 };
 
+const isMissingLegacyPremiumError = (error) => {
+  const message = String(error?.message || '').toLowerCase();
+  return message.includes('missing required attribute') && message.includes('is_premium');
+};
+
 const uniqueDocuments = (documents) => {
   const map = new Map();
   documents.forEach((document) => {
@@ -194,20 +199,113 @@ const executeApplicationSubmittedFunction = async (application) => {
   return body;
 };
 
-const createAutomaticMessage = async (employerId, jobId, jobData) => {
+const toDocumentRequirementArray = (value) => {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item || '').trim()).filter(Boolean);
+  }
+  return String(value || '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+};
+
+const buildEditableJobPayload = (employerId, jobData, options = {}) => {
+  const participantsNeeded = Math.max(1, Number(jobData.participants_needed || 1));
+  const requiredSkills = toSkillArray([
+    ...(Array.isArray(jobData.required_skills) ? jobData.required_skills : toSkillArray(jobData.required_skills || '')),
+    ...toSkillArray(jobData.auto_accept_criteria || ''),
+  ]);
+  const requirements = [
+    jobData.requirements,
+    jobData.auto_accept_criteria ? `Auto-accept criteria: ${jobData.auto_accept_criteria}` : '',
+  ].map((item) => String(item || '').trim()).filter(Boolean).join('\n\n');
+
+  const payload = {
+    category_id: jobData.category_id || jobData.category || 'general',
+    title: jobData.title || '',
+    description: jobData.description || '',
+    job_type: jobData.job_type || 'full-time',
+    location: jobData.location || '',
+    work_mode: jobData.work_mode || 'remote',
+    requirements,
+    salary_min: Number.isFinite(Number(jobData.salary_min)) ? Number(jobData.salary_min) : 0,
+    salary_max: Number.isFinite(Number(jobData.salary_max)) ? Number(jobData.salary_max) : 0,
+    participants_needed: Number.isFinite(participantsNeeded) ? participantsNeeded : 1,
+    required_skills: requiredSkills,
+    required_documents: toDocumentRequirementArray(jobData.required_documents),
+    interview_required: jobData.interview_required === true,
+    interview_type: jobData.interview_required ? jobData.interview_type || 'physical' : 'none',
+    interview_date: jobData.interview_date || '',
+    interview_time: jobData.interview_time || '',
+    interview_location: jobData.interview_location || '',
+    auto_accept_enabled: jobData.auto_accept_enabled === true,
+  };
+
+  if (options.includeIdentity) {
+    return {
+      job_id: options.jobId,
+      user_id: employerId,
+      employer_id: employerId,
+      ...payload,
+      applicant_count: 0,
+      accepted_count: 0,
+      is_active: true,
+    };
+  }
+
+  return payload;
+};
+
+const buildAutomaticMessagePayload = (employerId, jobId, jobData) => {
   const messageParts = [
     jobData.acceptance_message,
     jobData.interview_instructions ? `Interview instructions: ${jobData.interview_instructions}` : '',
   ].map((item) => String(item || '').trim()).filter(Boolean);
+  const attachments = jobData.acceptance_message_attachments || [];
 
-  if (messageParts.length === 0 && !jobData.acceptance_message_attachments?.length) return null;
+  if (messageParts.length === 0 && attachments.length === 0) return null;
 
-  return await databases.createDocument(DATABASE_ID, 'automatic_messages', ID.unique(), {
+  return {
     job_id: jobId,
     employer_id: employerId,
     message_text: messageParts.join('\n\n'),
-    attachments: jobData.acceptance_message_attachments || [],
-  }, [
+    attachments,
+  };
+};
+
+const getAutomaticMessagesForJob = async (jobId) => {
+  return await databases.listDocuments(DATABASE_ID, 'automatic_messages', [
+    Query.equal('job_id', jobId),
+    Query.limit(10),
+  ]);
+};
+
+const saveAutomaticMessage = async (employerId, jobId, jobData) => {
+  const payload = buildAutomaticMessagePayload(employerId, jobId, jobData);
+  const existing = await getAutomaticMessagesForJob(jobId).catch(() => ({ documents: [] }));
+  const [current, ...duplicates] = existing.documents;
+
+  await Promise.all(
+    duplicates.map((message) =>
+      databases.deleteDocument(DATABASE_ID, 'automatic_messages', message.$id).catch(() => null)
+    )
+  );
+
+  if (!payload) {
+    if (current?.$id) {
+      await databases.deleteDocument(DATABASE_ID, 'automatic_messages', current.$id).catch(() => null);
+    }
+    return null;
+  }
+
+  if (current?.$id) {
+    return await databases.updateDocument(DATABASE_ID, 'automatic_messages', current.$id, {
+      message_text: payload.message_text,
+      attachments: payload.attachments,
+    });
+  }
+
+  return await databases.createDocument(DATABASE_ID, 'automatic_messages', ID.unique(), payload, [
     Permission.read(Role.user(employerId)),
     Permission.update(Role.user(employerId)),
     Permission.delete(Role.user(employerId)),
@@ -290,7 +388,7 @@ export const jobService = {
       jobData.auto_accept_criteria ? `Auto-accept criteria: ${jobData.auto_accept_criteria}` : '',
     ].map((item) => String(item || '').trim()).filter(Boolean).join('\n\n');
 
-    const created = await databases.createDocument(DATABASE_ID, 'job_postings', jobId, {
+    const jobPayload = {
       job_id: jobId,
       user_id: employerId,
       category_id: jobData.category_id || jobData.category || 'general',
@@ -315,7 +413,16 @@ export const jobService = {
       applicant_count: 0,
       accepted_count: 0,
       is_active: true,
-    }, permissions);
+    };
+
+    const created = await databases.createDocument(DATABASE_ID, 'job_postings', jobId, jobPayload, permissions)
+      .catch((error) => {
+        if (!isMissingLegacyPremiumError(error)) throw error;
+        return databases.createDocument(DATABASE_ID, 'job_postings', jobId, {
+          ...jobPayload,
+          is_premium: false,
+        }, permissions);
+      });
 
     await createAutomaticMessage(employerId, created.$id, jobData).catch((error) =>
       console.error('Failed to save automatic message:', error.message)
@@ -428,14 +535,10 @@ export const jobService = {
       Permission.read(Role.user(userId)),
       Permission.update(Role.user(userId)),
       Permission.delete(Role.user(userId)),
-      ...(jobOwnerId ? [Permission.read(Role.user(jobOwnerId))] : []),
     ];
     const selectedDocuments = uploadedDocuments.map((document) =>
       typeof document === 'string' ? fileService.parseFileReference(document) : document
     ).filter(Boolean);
-    if (selectedDocuments.length > 0 && jobOwnerId) {
-      await documentService.grantEmployerAccess(selectedDocuments, userId, jobOwnerId);
-    }
     const appliedDocuments = selectedDocuments.map((document) =>
       documentService.serializeForApplication(document)
     );

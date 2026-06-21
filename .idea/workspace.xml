@@ -6,6 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="5b488d2c-d28c-4c6c-b1a3-7ed4a5d5aab6" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(admin)/dashboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(admin)/dashboard.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(auth)/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(auth)/login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(auth)/register.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(auth)/register.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(chat)/[id].js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(chat)/[id].js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(employer)/checkout.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(employer)/checkout.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(employer)/dashboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(employer)/dashboard.js" afterDir="false" />
@@ -14,25 +17,28 @@
       <change beforePath="$PROJECT_DIR$/app/(employer)/post-job.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(employer)/post-job.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(employer)/profile.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(employer)/profile.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(employer)/subscription.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(employer)/subscription.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(employer)/success.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(employer)/success.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(home)/applied.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(home)/applied.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(home)/home.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(home)/home.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(home)/job-details.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(home)/job-details.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(home)/notifications.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(home)/notifications.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(home)/saved.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(home)/saved.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(home)/search.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(home)/search.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(profile)/edit-profile.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(profile)/edit-profile.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(profile)/help.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(profile)/help.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(profile)/privacy.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(profile)/privacy.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(profile)/settings.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(profile)/settings.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/appwrite.config.json" beforeDir="false" afterPath="$PROJECT_DIR$/appwrite.config.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/appwrite/functions/onApplicationSubmitted/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/appwrite/functions/onApplicationSubmitted/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appwrite/functions/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/appwrite/functions/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appwrite/functions/purchasePremium/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/appwrite/functions/purchasePremium/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/appwrite/functions/processEmployeeDocument/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/appwrite/functions/processEmployeeDocument/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/appwrite/functions/sendMessage/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/appwrite/functions/sendMessage/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appwrite/functions/updateApplicationStatus/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/appwrite/functions/updateApplicationStatus/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appwrite/migrations/jobhub-fixes-2026-06-16.js" beforeDir="false" afterPath="$PROJECT_DIR$/appwrite/migrations/jobhub-fixes-2026-06-16.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appwrite/setup.js" beforeDir="false" afterPath="$PROJECT_DIR$/appwrite/setup.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appwrite/shared/constants.js" beforeDir="false" afterPath="$PROJECT_DIR$/appwrite/shared/constants.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/appwrite/migrations/jobhub-application-upgrade-2026-06-20.js" beforeDir="false" afterPath="$PROJECT_DIR$/appwrite/migrations/jobhub-application-upgrade-2026-06-20.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/cards/JobCard.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/cards/JobCard.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/chat/ChatListScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/chat/ChatListScreen.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/ui/Button.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/Button.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/ui/Input.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/Input.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/authService.js" beforeDir="false" afterPath="$PROJECT_DIR$/services/authService.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/chatService.js" beforeDir="false" afterPath="$PROJECT_DIR$/services/chatService.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/fileService.js" beforeDir="false" afterPath="$PROJECT_DIR$/services/fileService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/documentService.js" beforeDir="false" afterPath="$PROJECT_DIR$/services/documentService.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/jobService.js" beforeDir="false" afterPath="$PROJECT_DIR$/services/jobService.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/profileService.js" beforeDir="false" afterPath="$PROJECT_DIR$/services/profileService.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/jobUtils.js" beforeDir="false" afterPath="$PROJECT_DIR$/utils/jobUtils.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -185,7 +191,7 @@
       <workItem from="1780753207707" duration="7644000" />
       <workItem from="1781523406829" duration="302000" />
       <workItem from="1781524336683" duration="36930000" />
-      <workItem from="1781968265260" duration="9424000" />
+      <workItem from="1781968265260" duration="16105000" />
     </task>
     <servers />
   </component>

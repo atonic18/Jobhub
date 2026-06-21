@@ -10,7 +10,7 @@ export default function Subscription() {
   return (
     <View className="flex-1 bg-background dark:bg-darkBg px-6 pt-12">
       <View className="flex-row items-center mb-8">
-        <TouchableOpacity
+        <TouchableOpacity activeOpacity={0.92}
           onPress={() => router.back()}
           className="bg-white dark:bg-darkSurface p-2 rounded-xl shadow-sm border border-gray-100 dark:border-darkBorder mr-4"
         >

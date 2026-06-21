@@ -53,10 +53,10 @@ export default function AdminDashboard() {
       </View>
 
       <Text className="text-text dark:text-darkText text-xl font-bold mb-4">Quick Actions</Text>
-      <TouchableOpacity className="bg-white dark:bg-darkSurface p-6 rounded-3xl mb-4 border border-gray-100 dark:border-darkBorder shadow-sm">
+      <TouchableOpacity activeOpacity={0.92} className="bg-white dark:bg-darkSurface p-6 rounded-3xl mb-4 border border-gray-100 dark:border-darkBorder shadow-sm">
         <Text className="text-text dark:text-darkText font-bold text-lg">Manage All Users</Text>
       </TouchableOpacity>
-      <TouchableOpacity className="bg-white dark:bg-darkSurface p-6 rounded-3xl mb-10 border border-gray-100 dark:border-darkBorder shadow-sm">
+      <TouchableOpacity activeOpacity={0.92} className="bg-white dark:bg-darkSurface p-6 rounded-3xl mb-10 border border-gray-100 dark:border-darkBorder shadow-sm">
         <Text className="text-text dark:text-darkText font-bold text-lg">Generate System Report</Text>
       </TouchableOpacity>
     </ScrollView>

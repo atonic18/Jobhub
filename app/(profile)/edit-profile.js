@@ -363,7 +363,7 @@ export default function EditProfile() {
     >
     <ScrollView className="flex-1 bg-background dark:bg-darkBg px-6 pt-12" keyboardShouldPersistTaps="handled">
       <View className="flex-row items-center mb-8">
-        <TouchableOpacity onPress={() => router.back()} className="bg-white dark:bg-darkSurface p-2 rounded-xl border border-gray-100 dark:border-darkBorder mr-4">
+        <TouchableOpacity activeOpacity={0.92} onPress={() => router.back()} className="bg-white dark:bg-darkSurface p-2 rounded-xl border border-gray-100 dark:border-darkBorder mr-4">
           <ChevronLeft size={24} color="#2563EB" />
         </TouchableOpacity>
         <Text className="text-text dark:text-darkText text-xl font-bold">Edit Profile</Text>
@@ -371,7 +371,7 @@ export default function EditProfile() {
 
       <View className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-3xl p-5 mb-6 items-center">
         <ProfileAvatar uri={avatarUrl} name={formData.full_name} size={96} textSize={36} className="mb-4" />
-        <TouchableOpacity
+        <TouchableOpacity activeOpacity={0.92}
           onPress={pickProfilePicture}
           disabled={uploadingPhoto}
           className={`bg-blue-100 dark:bg-darkSurface2 px-4 py-3 rounded-2xl flex-row items-center ${uploadingPhoto ? 'opacity-60' : ''}`}
@@ -416,7 +416,7 @@ export default function EditProfile() {
             <Text className="text-text dark:text-darkText font-semibold mb-2 ml-1">Document Type</Text>
             <View className="flex-row flex-wrap mb-4">
               {EMPLOYEE_DOCUMENT_TYPES.map((type) => (
-                <TouchableOpacity
+                <TouchableOpacity activeOpacity={0.92}
                   key={type.value}
                   onPress={() => setDocumentType(type.value)}
                   className={`px-4 py-2 rounded-2xl border mr-2 mb-2 ${documentType === type.value ? 'bg-primary border-primary' : 'bg-gray-50 dark:bg-darkSurface2 border-gray-200 dark:border-darkBorder'}`}
@@ -428,7 +428,7 @@ export default function EditProfile() {
               ))}
             </View>
 
-            <TouchableOpacity
+            <TouchableOpacity activeOpacity={0.92}
               onPress={uploadEmployeeDocument}
               disabled={uploadingDocument}
               className={`border border-dashed border-primary rounded-2xl p-4 flex-row items-center justify-center mb-4 ${uploadingDocument ? 'opacity-60' : ''}`}
@@ -444,7 +444,7 @@ export default function EditProfile() {
             ) : (
               documents.map((document) => (
                 <View key={document.$id} className="bg-gray-50 dark:bg-darkSurface2 rounded-2xl p-4 mb-3">
-                  <TouchableOpacity onPress={() => openEmployeeDocument(document)} className="flex-row items-center">
+                  <TouchableOpacity activeOpacity={0.92} onPress={() => openEmployeeDocument(document)} className="flex-row items-center">
                     <FileText size={20} color="#2563EB" />
                     <View className="flex-1 ml-3">
                       <Text className="text-text dark:text-darkText font-bold" numberOfLines={1}>{document.file_name || 'Document'}</Text>
@@ -457,21 +457,21 @@ export default function EditProfile() {
                     </View>
                   </TouchableOpacity>
                   <View className="flex-row mt-3">
-                    <TouchableOpacity
+                    <TouchableOpacity activeOpacity={0.92}
                       onPress={() => replaceEmployeeDocument(document)}
                       disabled={replacingDocumentId === document.$id}
                       className="flex-1 bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-2xl py-3 items-center mr-2"
                     >
                       <Text className="text-primary font-bold">{replacingDocumentId === document.$id ? 'Replacing...' : 'Replace'}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity
+                    <TouchableOpacity activeOpacity={0.92}
                       onPress={() => rescanEmployeeDocument(document)}
                       disabled={rescanningDocumentId === document.$id}
                       className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-2xl px-4 items-center justify-center mr-2"
                     >
                       <RefreshCw size={18} color={rescanningDocumentId === document.$id ? '#94A3B8' : '#2563EB'} />
                     </TouchableOpacity>
-                    <TouchableOpacity
+                    <TouchableOpacity activeOpacity={0.92}
                       onPress={() => deleteEmployeeDocument(document)}
                       disabled={deletingDocumentId === document.$id}
                       className="bg-red-50 rounded-2xl px-4 items-center justify-center"

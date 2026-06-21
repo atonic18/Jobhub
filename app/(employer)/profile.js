@@ -208,12 +208,12 @@ export default function EmployerProfile() {
             <Text className="text-text dark:text-darkText text-2xl font-bold">Company Profile</Text>
             <Text className="text-secondaryText dark:text-darkMuted mt-1">Keep employer information current for applicants.</Text>
           </View>
-          <TouchableOpacity onPress={handleLogout} className="bg-red-50 p-3 rounded-2xl">
+          <TouchableOpacity activeOpacity={0.92} onPress={handleLogout} className="bg-red-50 p-3 rounded-2xl">
             <LogOut size={22} color="#EF4444" />
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
+        <TouchableOpacity activeOpacity={0.92}
           onPress={() => router.push('/(profile)/help')}
           className="bg-white dark:bg-darkSurface p-5 rounded-3xl flex-row items-center mb-6 border border-gray-100 dark:border-darkBorder"
         >
@@ -228,7 +228,7 @@ export default function EmployerProfile() {
 
         <View className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-3xl p-5 mb-6 items-center">
           <ProfileAvatar uri={avatarUrl} name={formData.company_name || formData.full_name} size={96} textSize={36} className="mb-4" />
-          <TouchableOpacity
+          <TouchableOpacity activeOpacity={0.92}
             onPress={pickProfilePicture}
             disabled={uploadingPhoto}
             className={`bg-blue-100 dark:bg-darkSurface2 px-4 py-3 rounded-2xl flex-row items-center ${uploadingPhoto ? 'opacity-60' : ''}`}

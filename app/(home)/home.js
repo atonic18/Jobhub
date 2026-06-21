@@ -144,13 +144,13 @@ export default function Home() {
           </View>
         </View>
         <View className="flex-row">
-          <TouchableOpacity
+          <TouchableOpacity activeOpacity={0.92}
             onPress={() => router.push('/(home)/saved')}
             className="bg-white dark:bg-darkSurface p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-darkBorder mr-3"
           >
             <Bookmark size={22} color="#2563EB" />
           </TouchableOpacity>
-          <TouchableOpacity
+          <TouchableOpacity activeOpacity={0.92}
             onPress={() => router.push('/(home)/notifications')}
             className="bg-white dark:bg-darkSurface p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-darkBorder"
           >
@@ -164,7 +164,7 @@ export default function Home() {
         </View>
       </View>
 
-      <TouchableOpacity
+      <TouchableOpacity activeOpacity={0.92}
         onPress={() => router.push('/(home)/search')}
         className="flex-row items-center bg-white dark:bg-darkSurface p-4 rounded-3xl shadow-sm border border-gray-100 dark:border-darkBorder mb-8"
       >
@@ -175,13 +175,13 @@ export default function Home() {
 
       <View className="flex-row justify-between items-center mb-4">
         <Text className="text-text dark:text-darkText text-xl font-bold">Recommended Departments</Text>
-        <TouchableOpacity onPress={() => router.push('/(home)/search')}>
+        <TouchableOpacity activeOpacity={0.92} onPress={() => router.push('/(home)/search')}>
           <Text className="text-primary font-bold">All</Text>
         </TouchableOpacity>
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-8">
         {JOB_DEPARTMENTS.map((department) => (
-          <TouchableOpacity
+          <TouchableOpacity activeOpacity={0.92}
             key={department.id}
             onPress={() =>
               router.push({
@@ -202,7 +202,7 @@ export default function Home() {
       <View className="mb-6">
         <View className="flex-row justify-between items-center mb-3">
           <Text className="text-text dark:text-darkText text-xl font-bold">Applied Jobs</Text>
-          <TouchableOpacity onPress={() => router.push('/(home)/applied')}>
+          <TouchableOpacity activeOpacity={0.92} onPress={() => router.push('/(home)/applied')}>
             <Text className="text-primary font-bold">View All</Text>
           </TouchableOpacity>
         </View>
@@ -212,7 +212,7 @@ export default function Home() {
           </View>
         ) : (
           applications.map((application) => (
-            <TouchableOpacity
+            <TouchableOpacity activeOpacity={0.92}
               key={application.$id}
               onPress={() => application.job && router.push({ pathname: '/(home)/job-details', params: { id: application.job.$id } })}
               className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder p-4 rounded-3xl mb-3"
@@ -233,7 +233,7 @@ export default function Home() {
 
       <View className="flex-row justify-between items-center mb-4">
         <Text className="text-text dark:text-darkText text-xl font-bold">Recommended Jobs</Text>
-        <TouchableOpacity onPress={() => router.push('/(home)/search')} className="flex-row items-center">
+        <TouchableOpacity activeOpacity={0.92} onPress={() => router.push('/(home)/search')} className="flex-row items-center">
           <Text className="text-primary font-bold">See All</Text>
           <ChevronRight size={16} color="#2563EB" />
         </TouchableOpacity>

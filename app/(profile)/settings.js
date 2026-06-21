@@ -27,7 +27,7 @@ export default function Settings() {
   };
 
   const MenuItem = ({ icon, title, subtitle, onPress }) => (
-    <TouchableOpacity
+    <TouchableOpacity activeOpacity={0.92}
       onPress={onPress}
       className="flex-row items-center justify-between p-6 bg-white dark:bg-darkSurface border-b border-gray-50 dark:border-darkBorder"
     >
@@ -79,7 +79,7 @@ export default function Settings() {
           onPress={() => router.push('/(profile)/help')}
         />
 
-        <TouchableOpacity
+        <TouchableOpacity activeOpacity={0.92}
           onPress={handleLogout}
           className="flex-row items-center p-6 mt-6"
         >

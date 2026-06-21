@@ -88,7 +88,7 @@ export default function ChatListScreen() {
             className="flex-1 px-3 py-3 text-text dark:text-darkText"
           />
           {query ? (
-            <TouchableOpacity onPress={() => setQuery('')} className="p-1">
+            <TouchableOpacity activeOpacity={0.92} onPress={() => setQuery('')} className="p-1">
               <X size={18} color="#64748B" />
             </TouchableOpacity>
           ) : null}
@@ -110,7 +110,7 @@ export default function ChatListScreen() {
             const participantName = participantProfile?.displayName || 'User';
             const participantSubtitle = item.last_message || participantProfile?.subtitle || 'Chat participant';
             return (
-              <TouchableOpacity
+              <TouchableOpacity activeOpacity={0.92}
                 onPress={() => router.push(`/(chat)/${item.$id}`)}
                 className="flex-row items-center p-6 bg-white dark:bg-darkSurface border-b border-gray-50 dark:border-darkBorder"
               >

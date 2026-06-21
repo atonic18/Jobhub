@@ -1,14 +1,15 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 import { Banknote, Bookmark, BookmarkCheck, Clock, MapPin, Users } from 'lucide-react-native';
 import { ProfileAvatar } from '../ui/ProfileAvatar';
+import { PressableSurface } from '../ui/PressableSurface';
 import { formatTimestamp, getApplicationStatusLabel, getCompanyLabel, getDepartmentForJob, getSalaryLabel } from '../../utils/jobUtils';
 
 export const JobCard = ({ job, onPress, onSavePress, saved = false }) => {
   return (
-    <TouchableOpacity 
+    <PressableSurface
       onPress={onPress}
-      className="bg-white dark:bg-darkSurface p-5 rounded-3xl mb-4 shadow-sm border border-gray-100 dark:border-darkBorder"
+      className="bg-white dark:bg-darkSurface p-5 rounded-3xl mb-4 border border-gray-100 dark:border-darkBorder"
     >
       <View className="flex-row justify-between items-start mb-3">
         <View className="flex-1 flex-row items-start">
@@ -25,19 +26,21 @@ export const JobCard = ({ job, onPress, onSavePress, saved = false }) => {
           </View>
         </View>
         <View className="items-end ml-3">
-          <TouchableOpacity
+          <PressableSurface
             onPress={(event) => {
               event?.stopPropagation?.();
               onSavePress?.(job);
             }}
             className="bg-blue-50 dark:bg-darkSurface2 p-2 rounded-full mb-2"
+            shadow={false}
+            pressedStyle={{ backgroundColor: '#DBEAFE' }}
           >
             {saved ? (
               <BookmarkCheck size={18} color="#2563EB" />
             ) : (
               <Bookmark size={18} color="#2563EB" />
             )}
-          </TouchableOpacity>
+          </PressableSurface>
           <View className="bg-blue-100 dark:bg-darkSurface2 px-3 py-1 rounded-full">
             <Text className="text-primary text-xs font-bold">{job.job_type || 'Open'}</Text>
           </View>
@@ -89,7 +92,7 @@ export const JobCard = ({ job, onPress, onSavePress, saved = false }) => {
           <Text className="text-primary text-xs font-bold ml-1">{job.applicant_count || 0} applicants</Text>
         </View>
       </View>
-    </TouchableOpacity>
+    </PressableSurface>
   );
 };
 

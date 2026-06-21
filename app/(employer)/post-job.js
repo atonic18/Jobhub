@@ -5,6 +5,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import { ChevronLeft, FileText, Paperclip, X } from 'lucide-react-native';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
+import { PressableSurface } from '../../components/ui/PressableSurface';
 import { jobService } from '../../services/jobService';
 import { fileService } from '../../services/fileService';
 import { useAuth } from '../../context/AuthContext';
@@ -142,12 +143,16 @@ export default function PostJob() {
   };
 
   const OptionChip = ({ label, selected, onPress }) => (
-    <TouchableOpacity
+    <PressableSurface
       onPress={onPress}
       className={`px-4 py-2 rounded-xl border mr-2 mb-2 ${selected ? 'bg-primary border-primary' : 'bg-white dark:bg-darkSurface border-gray-200 dark:border-darkBorder'}`}
+      shadow={false}
+      pressedStyle={selected ? { backgroundColor: '#1D4ED8', borderColor: '#1D4ED8' } : { backgroundColor: '#EFF6FF', borderColor: '#BFDBFE' }}
     >
-      <Text className={`${selected ? 'text-white' : 'text-secondaryText dark:text-darkMuted'} font-bold capitalize`}>{label}</Text>
-    </TouchableOpacity>
+      {({ pressed }) => (
+        <Text className={`${selected ? 'text-white' : pressed ? 'text-primary' : 'text-secondaryText dark:text-darkMuted'} font-bold capitalize`}>{label}</Text>
+      )}
+    </PressableSurface>
   );
 
   return (
@@ -157,7 +162,7 @@ export default function PostJob() {
     >
       <ScrollView className="flex-1 bg-background dark:bg-darkBg px-6 pt-12 pb-10" keyboardShouldPersistTaps="handled">
         <View className="flex-row items-center mb-8">
-          <TouchableOpacity
+          <TouchableOpacity activeOpacity={0.92}
             onPress={() => router.back()}
             className="bg-white dark:bg-darkSurface p-2 rounded-xl shadow-sm border border-gray-100 dark:border-darkBorder mr-4"
           >
@@ -253,7 +258,7 @@ export default function PostJob() {
           onChangeText={(text) => updateField('required_documents', text)}
         />
 
-        <View className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-3xl p-5 mb-6">
+        <View className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-3xl p-5 mb-6 shadow-sm">
           <Text className="text-text dark:text-darkText text-lg font-bold mb-3">Interview Options</Text>
           <View className="flex-row flex-wrap mb-2">
             {INTERVIEW_OPTIONS.map((option) => (
@@ -275,13 +280,13 @@ export default function PostJob() {
           ) : null}
         </View>
 
-        <View className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-3xl p-5 mb-6">
+        <View className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-3xl p-5 mb-6 shadow-sm">
           <View className="flex-row justify-between items-center mb-3">
             <View className="flex-1 mr-3">
               <Text className="text-text dark:text-darkText text-lg font-bold">Automatic Acceptance</Text>
               <Text className="text-secondaryText dark:text-darkMuted mt-1">Qualified applicants can be accepted automatically using job-related criteria only.</Text>
             </View>
-            <TouchableOpacity
+            <TouchableOpacity activeOpacity={0.92}
               onPress={() => updateField('auto_accept_enabled', !formData.auto_accept_enabled)}
               className={`w-14 h-8 rounded-full p-1 ${formData.auto_accept_enabled ? 'bg-primary' : 'bg-gray-300 dark:bg-darkSurface2'}`}
             >
@@ -302,7 +307,7 @@ export default function PostJob() {
           ) : null}
         </View>
 
-        <View className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-3xl p-5 mb-6">
+        <View className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-3xl p-5 mb-6 shadow-sm">
           <Text className="text-text dark:text-darkText text-lg font-bold mb-3">Acceptance Message</Text>
           <Input
             label="Message Text"
@@ -314,7 +319,7 @@ export default function PostJob() {
             textAlignVertical="top"
             inputClassName="min-h-[120px]"
           />
-          <TouchableOpacity
+          <TouchableOpacity activeOpacity={0.92}
             onPress={pickAttachment}
             disabled={uploadingAttachment}
             className={`border border-dashed border-primary rounded-2xl p-4 flex-row items-center justify-center mb-4 ${uploadingAttachment ? 'opacity-60' : ''}`}
@@ -326,7 +331,7 @@ export default function PostJob() {
             <View key={attachment.fileId} className="bg-gray-50 dark:bg-darkSurface2 rounded-2xl p-3 mb-2 flex-row items-center">
               <FileText size={18} color="#2563EB" />
               <Text className="text-secondaryText dark:text-darkMuted ml-3 flex-1" numberOfLines={1}>{attachment.name}</Text>
-              <TouchableOpacity onPress={() => removeAttachment(attachment.fileId)} className="p-1">
+              <TouchableOpacity activeOpacity={0.92} onPress={() => removeAttachment(attachment.fileId)} className="p-1">
                 <X size={18} color="#EF4444" />
               </TouchableOpacity>
             </View>

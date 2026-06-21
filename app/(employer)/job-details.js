@@ -171,7 +171,7 @@ export default function EmployerJobDetails() {
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#2563EB" colors={['#2563EB']} />}
     >
       <View className="flex-row items-center mb-8">
-        <TouchableOpacity onPress={() => router.back()} className="bg-white dark:bg-darkSurface p-2 rounded-xl border border-gray-100 dark:border-darkBorder mr-4">
+        <TouchableOpacity activeOpacity={0.92} onPress={() => router.back()} className="bg-white dark:bg-darkSurface p-2 rounded-xl border border-gray-100 dark:border-darkBorder mr-4">
           <ChevronLeft size={24} color="#2563EB" />
         </TouchableOpacity>
         <Text className="text-text dark:text-darkText text-xl font-bold flex-1">Job Details</Text>
@@ -226,7 +226,7 @@ export default function EmployerJobDetails() {
             loading={updating}
           />
         </View>
-        <TouchableOpacity
+        <TouchableOpacity activeOpacity={0.92}
           onPress={deleteJob}
           disabled={updating}
           className={`px-5 rounded-2xl bg-red-50 flex-row items-center justify-center ${updating ? 'opacity-60' : ''}`}
@@ -276,7 +276,7 @@ export default function EmployerJobDetails() {
                 </View>
                 </View>
               </View>
-              <TouchableOpacity
+              <TouchableOpacity activeOpacity={0.92}
                 onPress={() => messageApplicant(application.user_id)}
                 className="bg-primary p-3 rounded-2xl"
               >
@@ -306,7 +306,7 @@ export default function EmployerJobDetails() {
                 {documents.map((documentValue, index) => {
                   const document = fileService.parseFileReference(documentValue);
                   return (
-                    <TouchableOpacity
+                    <TouchableOpacity activeOpacity={0.92}
                       key={`${application.$id}-${index}`}
                       onPress={() => openDocument(documentValue)}
                       className="bg-gray-50 dark:bg-darkSurface2 rounded-2xl p-3 mb-2 flex-row items-center"
@@ -322,7 +322,7 @@ export default function EmployerJobDetails() {
             ) : null}
             <View className="flex-row mt-4">
               {!isAccepted ? (
-                <TouchableOpacity
+                <TouchableOpacity activeOpacity={0.92}
                   onPress={() => updateApplicationStatus(application, APPLICATION_STATUSES.ACCEPTED)}
                   disabled={acceptDisabled}
                   className={`flex-1 py-3 rounded-2xl flex-row items-center justify-center mr-2 ${acceptDisabled ? 'bg-gray-200 dark:bg-darkSurface2' : 'bg-green-600'}`}
@@ -334,7 +334,7 @@ export default function EmployerJobDetails() {
                 </TouchableOpacity>
               ) : null}
               {application.status !== APPLICATION_STATUSES.REJECTED ? (
-                <TouchableOpacity
+                <TouchableOpacity activeOpacity={0.92}
                   onPress={() => updateApplicationStatus(application, APPLICATION_STATUSES.REJECTED)}
                   disabled={statusUpdatingId === application.$id}
                   className="flex-1 py-3 rounded-2xl flex-row items-center justify-center bg-red-50 ml-2"
