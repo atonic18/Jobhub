@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl, Alert } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { ChevronRight, Plus, RefreshCw, Trash2, Users } from 'lucide-react-native';
+import { ChevronRight, Pencil, Plus, RefreshCw, Trash2, Users } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
 import { jobService } from '../../services/jobService';
 import { getSalaryLabel, getUserId } from '../../utils/jobUtils';
@@ -55,6 +55,10 @@ export default function EmployerJobs() {
         },
       },
     ]);
+  };
+
+  const openEditJob = (job) => {
+    router.push({ pathname: '/(employer)/post-job', params: { id: job.$id } });
   };
 
   const activeCount = jobs.filter((job) => job.is_active !== false).length;
@@ -119,6 +123,15 @@ export default function EmployerJobs() {
                   </View>
                 </View>
                 <View className="items-end">
+                  <TouchableOpacity activeOpacity={0.92}
+                    onPress={(event) => {
+                      event?.stopPropagation?.();
+                      openEditJob(item);
+                    }}
+                    className="bg-blue-50 p-2 rounded-xl mb-3"
+                  >
+                    <Pencil size={18} color="#2563EB" />
+                  </TouchableOpacity>
                   <TouchableOpacity activeOpacity={0.92}
                     onPress={(event) => {
                       event?.stopPropagation?.();

@@ -203,7 +203,11 @@ const run = async () => {
   await createString('job_postings', 'interview_date', 50);
   await createString('job_postings', 'interview_time', 50);
   await createString('job_postings', 'interview_location', 1000);
+  await createString('job_postings', 'interview_instructions', 5000);
   await createBoolean('job_postings', 'auto_accept_enabled', false, false);
+  await createString('job_postings', 'auto_accept_criteria', 5000);
+  await createString('job_postings', 'acceptance_message', 5000);
+  await createString('job_postings', 'acceptance_message_attachments', 4000, false, true);
   await makeLegacyBooleanOptional('job_postings', 'is_premium', false);
 
   await normalizeOldApplicationStatuses();

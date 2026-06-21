@@ -5,39 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5b488d2c-d28c-4c6c-b1a3-7ed4a5d5aab6" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/eas.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/workflows" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(admin)/dashboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(admin)/dashboard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(auth)/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(auth)/login.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(auth)/register.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(auth)/register.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(chat)/[id].js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(chat)/[id].js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(employer)/checkout.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(employer)/checkout.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(employer)/dashboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(employer)/dashboard.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(employer)/job-details.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(employer)/job-details.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(employer)/jobs.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(employer)/jobs.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(employer)/post-job.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(employer)/post-job.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(employer)/profile.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(employer)/profile.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(employer)/subscription.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(employer)/subscription.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(home)/applied.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(home)/applied.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(home)/home.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(home)/home.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(home)/job-details.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(home)/job-details.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(home)/notifications.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(home)/notifications.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(home)/saved.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(home)/saved.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(home)/search.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(home)/search.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(profile)/edit-profile.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(profile)/edit-profile.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(profile)/help.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(profile)/help.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(profile)/privacy.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(profile)/privacy.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(profile)/settings.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/(profile)/settings.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appwrite.config.json" beforeDir="false" afterPath="$PROJECT_DIR$/appwrite.config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appwrite/functions/onApplicationSubmitted/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/appwrite/functions/onApplicationSubmitted/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appwrite/functions/processEmployeeDocument/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/appwrite/functions/processEmployeeDocument/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appwrite/functions/sendMessage/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/appwrite/functions/sendMessage/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/appwrite/migrations/jobhub-application-upgrade-2026-06-20.js" beforeDir="false" afterPath="$PROJECT_DIR$/appwrite/migrations/jobhub-application-upgrade-2026-06-20.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/cards/JobCard.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/cards/JobCard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/chat/ChatListScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/chat/ChatListScreen.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/ui/Button.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/Button.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/ui/Input.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/Input.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/documentService.js" beforeDir="false" afterPath="$PROJECT_DIR$/services/documentService.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/jobService.js" beforeDir="false" afterPath="$PROJECT_DIR$/services/jobService.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -46,7 +21,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="118" />
+    <option name="cachedIndexableFilesCount" value="130" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -65,23 +40,23 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.2138842668345076" />
-      <entry key="MS500" value="2.1463256026910384" />
-      <entry key="S2" value="3.9417884394046854" />
-      <entry key="S5" value="6.026003015939217" />
-      <entry key="S10" value="7.275932489655403" />
-      <entry key="S30" value="8.362004828436717" />
-      <entry key="S60" value="8.672311406233648" />
-      <entry key="M2" value="8.833919727068526" />
-      <entry key="M5" value="8.93302294402448" />
-      <entry key="M10" value="8.966419945454353" />
-      <entry key="M15" value="8.977592905389411" />
-      <entry key="M30" value="8.988786246417162" />
-      <entry key="H1" value="8.99555815282552" />
-      <entry key="H2" value="10.009238989627312" />
-      <entry key="H4" value="46.69448088323779" />
-      <entry key="D1" value="946.1910311934587" />
-      <entry key="W1" value="1901.7923567195971" />
+      <entry key="MS100" value="1.321073195438052" />
+      <entry key="MS500" value="3.0197275683070726" />
+      <entry key="S2" value="7.165258260646683" />
+      <entry key="S5" value="10.712515021649686" />
+      <entry key="S10" value="15.698517446757656" />
+      <entry key="S30" value="46.90427458703197" />
+      <entry key="S60" value="86.06163235667194" />
+      <entry key="M2" value="128.59298454125604" />
+      <entry key="M5" value="172.93496602729203" />
+      <entry key="M10" value="193.89362390116526" />
+      <entry key="M15" value="201.9279330563721" />
+      <entry key="M30" value="210.60337473152964" />
+      <entry key="H1" value="215.90656757368038" />
+      <entry key="H2" value="229.03575199193918" />
+      <entry key="H4" value="273.8309321611682" />
+      <entry key="D1" value="1106.4025325224243" />
+      <entry key="W1" value="2228.8955739442818" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
@@ -95,31 +70,31 @@
       <entry key="M5" value="0.0" />
       <entry key="M10" value="0.0" />
       <entry key="M15" value="0.0" />
-      <entry key="M30" value="1.858570436724363E-251" />
-      <entry key="H1" value="1.1895201134916146E-125" />
-      <entry key="H2" value="9.696122365514145E-63" />
-      <entry key="H4" value="2.7809502080626806E-31" />
-      <entry key="D1" value="4.569311255872857E-5" />
-      <entry key="W1" value="1.4257836109259807" />
+      <entry key="M30" value="2.203751600301495E-256" />
+      <entry key="H1" value="4.09603442343276E-128" />
+      <entry key="H2" value="5.6897605746151097E-64" />
+      <entry key="H4" value="6.736606267837926E-32" />
+      <entry key="D1" value="3.60765833984344E-5" />
+      <entry key="W1" value="1.378455832266448" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.133982125923517" />
-      <entry key="MS500" value="2.1181227602389483" />
-      <entry key="S2" value="3.9267702982190276" />
-      <entry key="S5" value="6.016247036502812" />
-      <entry key="S10" value="7.269951216181745" />
-      <entry key="S30" value="8.359694456074342" />
-      <entry key="S60" value="8.671111196894254" />
-      <entry key="M2" value="8.833307914822527" />
-      <entry key="M5" value="8.932775349506533" />
-      <entry key="M10" value="8.966295664857512" />
-      <entry key="M15" value="8.977509943871311" />
-      <entry key="M30" value="8.988744711669753" />
-      <entry key="H1" value="8.99553736906107" />
-      <entry key="H2" value="10.00922733750153" />
-      <entry key="H4" value="46.694451213997425" />
-      <entry key="D1" value="946.1909391215099" />
-      <entry key="W1" value="1903.2180514708562" />
+      <entry key="MS100" value="1.01115936533414" />
+      <entry key="MS500" value="2.848946440678047" />
+      <entry key="S2" value="7.067452195217437" />
+      <entry key="S5" value="10.654686158210412" />
+      <entry key="S10" value="15.656666925493079" />
+      <entry key="S30" value="46.86387730924256" />
+      <entry key="S60" value="86.02586294715928" />
+      <entry key="M2" value="128.5673062013926" />
+      <entry key="M5" value="172.92171785366784" />
+      <entry key="M10" value="193.88634221784767" />
+      <entry key="M15" value="201.9229154836595" />
+      <entry key="M30" value="210.60077934008075" />
+      <entry key="H1" value="215.90524128569933" />
+      <entry key="H2" value="229.03503625466922" />
+      <entry key="H4" value="273.83049018553976" />
+      <entry key="D1" value="1106.4023498037297" />
+      <entry key="W1" value="2230.273926421911" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -155,7 +130,7 @@
     "onboarding.tips.debug.path": "C:/Users/Hikary/Desktop/jobhub/jobhubcodebase/src/main.js",
     "prettierjs.PrettierConfiguration.Package": "C:\\Users\\Hikary\\Desktop\\jobhub\\jobhubcodebase\\node_modules\\prettier",
     "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "preferences.keymap",
+    "settings.editor.selected.configurable": "ml.llm.AcpAgentsConfigurable",
     "to.speed.mode.migration.done": "true",
     "ts.external.directory.path": "C:\\Program Files\\JetBrains\\WebStorm 2026.1.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
     "vue.rearranger.settings.migration": "true"
@@ -191,7 +166,7 @@
       <workItem from="1780753207707" duration="7644000" />
       <workItem from="1781523406829" duration="302000" />
       <workItem from="1781524336683" duration="36930000" />
-      <workItem from="1781968265260" duration="16105000" />
+      <workItem from="1781968265260" duration="30353000" />
     </task>
     <servers />
   </component>

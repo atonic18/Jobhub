@@ -209,25 +209,29 @@ const toDocumentRequirementArray = (value) => {
     .filter(Boolean);
 };
 
+const toStoredStringArray = (value) => {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item || '').trim()).filter(Boolean);
+  }
+  const text = String(value || '').trim();
+  return text ? [text] : [];
+};
+
 const buildEditableJobPayload = (employerId, jobData, options = {}) => {
   const participantsNeeded = Math.max(1, Number(jobData.participants_needed || 1));
   const requiredSkills = toSkillArray([
     ...(Array.isArray(jobData.required_skills) ? jobData.required_skills : toSkillArray(jobData.required_skills || '')),
     ...toSkillArray(jobData.auto_accept_criteria || ''),
   ]);
-  const requirements = [
-    jobData.requirements,
-    jobData.auto_accept_criteria ? `Auto-accept criteria: ${jobData.auto_accept_criteria}` : '',
-  ].map((item) => String(item || '').trim()).filter(Boolean).join('\n\n');
 
   const payload = {
     category_id: jobData.category_id || jobData.category || 'general',
-    title: jobData.title || '',
-    description: jobData.description || '',
+    title: String(jobData.title || '').trim(),
+    description: String(jobData.description || '').trim(),
     job_type: jobData.job_type || 'full-time',
-    location: jobData.location || '',
+    location: String(jobData.location || '').trim(),
     work_mode: jobData.work_mode || 'remote',
-    requirements,
+    requirements: String(jobData.requirements || '').trim(),
     salary_min: Number.isFinite(Number(jobData.salary_min)) ? Number(jobData.salary_min) : 0,
     salary_max: Number.isFinite(Number(jobData.salary_max)) ? Number(jobData.salary_max) : 0,
     participants_needed: Number.isFinite(participantsNeeded) ? participantsNeeded : 1,
@@ -235,10 +239,14 @@ const buildEditableJobPayload = (employerId, jobData, options = {}) => {
     required_documents: toDocumentRequirementArray(jobData.required_documents),
     interview_required: jobData.interview_required === true,
     interview_type: jobData.interview_required ? jobData.interview_type || 'physical' : 'none',
-    interview_date: jobData.interview_date || '',
-    interview_time: jobData.interview_time || '',
-    interview_location: jobData.interview_location || '',
+    interview_date: String(jobData.interview_date || '').trim(),
+    interview_time: String(jobData.interview_time || '').trim(),
+    interview_location: String(jobData.interview_location || '').trim(),
+    interview_instructions: String(jobData.interview_instructions || '').trim(),
     auto_accept_enabled: jobData.auto_accept_enabled === true,
+    auto_accept_criteria: String(jobData.auto_accept_criteria || '').trim(),
+    acceptance_message: String(jobData.acceptance_message || '').trim(),
+    acceptance_message_attachments: toStoredStringArray(jobData.acceptance_message_attachments),
   };
 
   if (options.includeIdentity) {
@@ -372,48 +380,13 @@ export const jobService = {
 
   // Create new job (Employer)
   createJob: async (employerId, jobData) => {
-    const participantsNeeded = Math.max(1, Number(jobData.participants_needed || 1));
     const jobId = ID.unique();
     const permissions = [
       Permission.read(Role.users()), // Authenticated users can read jobs
       Permission.update(Role.user(employerId)),
       Permission.delete(Role.user(employerId)),
     ];
-    const requiredSkills = toSkillArray([
-      ...(Array.isArray(jobData.required_skills) ? jobData.required_skills : toSkillArray(jobData.required_skills || '')),
-      ...toSkillArray(jobData.auto_accept_criteria || ''),
-    ]);
-    const requirements = [
-      jobData.requirements,
-      jobData.auto_accept_criteria ? `Auto-accept criteria: ${jobData.auto_accept_criteria}` : '',
-    ].map((item) => String(item || '').trim()).filter(Boolean).join('\n\n');
-
-    const jobPayload = {
-      job_id: jobId,
-      user_id: employerId,
-      category_id: jobData.category_id || jobData.category || 'general',
-      employer_id: employerId,
-      title: jobData.title || '',
-      description: jobData.description || '',
-      job_type: jobData.job_type || 'full-time',
-      location: jobData.location || '',
-      work_mode: jobData.work_mode || 'remote',
-      requirements,
-      salary_min: Number.isFinite(Number(jobData.salary_min)) ? Number(jobData.salary_min) : 0,
-      salary_max: Number.isFinite(Number(jobData.salary_max)) ? Number(jobData.salary_max) : 0,
-      participants_needed: Number.isFinite(participantsNeeded) ? participantsNeeded : 1,
-      required_skills: requiredSkills,
-      required_documents: jobData.required_documents || [],
-      interview_required: jobData.interview_required === true,
-      interview_type: jobData.interview_required ? jobData.interview_type || 'physical' : 'none',
-      interview_date: jobData.interview_date || '',
-      interview_time: jobData.interview_time || '',
-      interview_location: jobData.interview_location || '',
-      auto_accept_enabled: jobData.auto_accept_enabled === true,
-      applicant_count: 0,
-      accepted_count: 0,
-      is_active: true,
-    };
+    const jobPayload = buildEditableJobPayload(employerId, jobData, { includeIdentity: true, jobId });
 
     const created = await databases.createDocument(DATABASE_ID, 'job_postings', jobId, jobPayload, permissions)
       .catch((error) => {
@@ -424,7 +397,7 @@ export const jobService = {
         }, permissions);
       });
 
-    await createAutomaticMessage(employerId, created.$id, jobData).catch((error) =>
+    await saveAutomaticMessage(employerId, created.$id, jobData).catch((error) =>
       console.error('Failed to save automatic message:', error.message)
     );
 
@@ -446,6 +419,42 @@ export const jobService = {
   // Update job
   updateJob: async (jobId, jobData) => {
     return await databases.updateDocument(DATABASE_ID, 'job_postings', jobId, jobData);
+  },
+
+  getJobEditDetails: async (jobId) => {
+    const job = await jobService.getJob(jobId);
+    const automaticMessage = await getAutomaticMessagesForJob(jobId)
+      .then((response) => response.documents?.[0] || null)
+      .catch(() => null);
+
+    return {
+      ...job,
+      acceptance_message: job.acceptance_message || automaticMessage?.message_text || '',
+      acceptance_message_attachments: job.acceptance_message_attachments?.length
+        ? job.acceptance_message_attachments
+        : automaticMessage?.attachments || [],
+    };
+  },
+
+  updateJobDetails: async (employerId, jobId, jobData) => {
+    const existing = await jobService.getJob(jobId);
+    const ownerId = existing.employer_id || existing.user_id;
+    if (ownerId && employerId && ownerId !== employerId) {
+      throw new Error('Only the employer who posted this job can edit it.');
+    }
+
+    const updated = await databases.updateDocument(
+      DATABASE_ID,
+      'job_postings',
+      jobId,
+      buildEditableJobPayload(employerId, jobData)
+    );
+
+    await saveAutomaticMessage(employerId, updated.$id, jobData).catch((error) =>
+      console.error('Failed to save automatic message:', error.message)
+    );
+
+    return updated;
   },
 
   // Delete/Deactivate job

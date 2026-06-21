@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert, RefreshControl, Linking } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Check, ChevronLeft, FileText, MessageSquare, ShieldOff, Trash2, Users, X } from 'lucide-react-native';
+import { Check, ChevronLeft, FileText, MessageSquare, Pencil, ShieldOff, Trash2, Users, X } from 'lucide-react-native';
 import { jobService } from '../../services/jobService';
 import { chatService } from '../../services/chatService';
 import { fileService } from '../../services/fileService';
@@ -94,6 +94,11 @@ export default function EmployerJobDetails() {
         },
       },
     ]);
+  };
+
+  const editJob = () => {
+    if (!job) return;
+    router.push({ pathname: '/(employer)/post-job', params: { id: job.$id } });
   };
 
   const messageApplicant = async (applicantId) => {
@@ -217,23 +222,31 @@ export default function EmployerJobDetails() {
         </View>
       </View>
 
-      <View className="flex-row mb-8">
-        <View className="flex-1 mr-3">
-          <Button
-            title={job.is_active === false ? 'Reopen Job' : 'Close Job'}
-            variant={job.is_active === false ? 'primary' : 'outline'}
-            onPress={toggleJobStatus}
-            loading={updating}
-          />
+      <View className="mb-8">
+        <Button
+          title={job.is_active === false ? 'Reopen Job' : 'Close Job'}
+          variant={job.is_active === false ? 'primary' : 'outline'}
+          onPress={toggleJobStatus}
+          loading={updating}
+        />
+        <View className="flex-row mt-3">
+          <TouchableOpacity activeOpacity={0.92}
+            onPress={editJob}
+            disabled={updating}
+            className={`flex-1 py-4 rounded-2xl bg-blue-50 flex-row items-center justify-center mr-3 ${updating ? 'opacity-60' : ''}`}
+          >
+            <Pencil size={20} color="#2563EB" />
+            <Text className="text-primary font-bold ml-2">Edit</Text>
+          </TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.92}
+            onPress={deleteJob}
+            disabled={updating}
+            className={`flex-1 py-4 rounded-2xl bg-red-50 flex-row items-center justify-center ${updating ? 'opacity-60' : ''}`}
+          >
+            <Trash2 size={20} color="#EF4444" />
+            <Text className="text-red-500 font-bold ml-2">Delete</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity activeOpacity={0.92}
-          onPress={deleteJob}
-          disabled={updating}
-          className={`px-5 rounded-2xl bg-red-50 flex-row items-center justify-center ${updating ? 'opacity-60' : ''}`}
-        >
-          <Trash2 size={20} color="#EF4444" />
-          <Text className="text-red-500 font-bold ml-2">Delete</Text>
-        </TouchableOpacity>
       </View>
 
       <Text className="text-text dark:text-darkText text-xl font-bold mb-4">Applicants</Text>

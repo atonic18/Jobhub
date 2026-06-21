@@ -15,7 +15,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.jobhub.app"
+      "bundleIdentifier": "com.jobhub.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.jobhub.app",
@@ -32,10 +35,15 @@
     ],
     "extra": {
       "appwriteEndpoint": "https://sfo.cloud.appwrite.io/v1",
-      "appwriteProjectId": "1212125"
+      "appwriteProjectId": "1212125",
+      "router": {},
+      "eas": {
+        "projectId": "003e62df-2766-44bb-84a5-49a5c08f75ec"
+      }
     },
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "owner": "atonic18"
   }
 }
