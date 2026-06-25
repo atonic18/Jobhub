@@ -3,7 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Key
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import { Camera, ChevronLeft, FileText, Paperclip, RefreshCw, Trash2 } from 'lucide-react-native';
+import { AlignLeft, Award, BriefcaseBusiness, Building2, Camera, ChevronLeft, FileText, Globe2, GraduationCap, Mail, MapPin, Paperclip, Phone, RefreshCw, Sparkles, Trash2, UserRound } from 'lucide-react-native';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
@@ -361,12 +361,22 @@ export default function EditProfile() {
       className="flex-1 bg-background dark:bg-darkBg"
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-    <ScrollView className="flex-1 bg-background dark:bg-darkBg px-6 pt-12" keyboardShouldPersistTaps="handled">
+    <ScrollView
+      className="flex-1 bg-background dark:bg-darkBg px-6 pt-16"
+      contentContainerStyle={{ paddingBottom: 112 }}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+    >
       <View className="flex-row items-center mb-8">
         <TouchableOpacity activeOpacity={0.92} onPress={() => router.back()} className="bg-white dark:bg-darkSurface p-2 rounded-xl border border-gray-100 dark:border-darkBorder mr-4">
           <ChevronLeft size={24} color="#2563EB" />
         </TouchableOpacity>
-        <Text className="text-text dark:text-darkText text-xl font-bold">Edit Profile</Text>
+        <View className="flex-1">
+          <Text className="text-secondaryText dark:text-darkMuted text-xs font-bold uppercase tracking-wider">
+            {role === 'employer' ? 'Employer profile' : 'Job seeker profile'}
+          </Text>
+          <Text className="text-text dark:text-darkText text-2xl font-extrabold mt-1">Edit Profile</Text>
+        </View>
       </View>
 
       <View className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-3xl p-5 mb-6 items-center">
@@ -381,34 +391,126 @@ export default function EditProfile() {
         </TouchableOpacity>
       </View>
 
-      <Input label="Full Name" value={formData.full_name} onChangeText={(value) => updateField('full_name', value)} placeholder="Your full name" />
-      <Input label="Phone" value={formData.phone} onChangeText={(value) => updateField('phone', value)} placeholder="Phone number" keyboardType="phone-pad" />
+      <View className="bg-white/70 dark:bg-darkSurface/70 rounded-[32px] p-4 border border-white dark:border-darkBorder mb-6">
+        <Text className="text-text dark:text-darkText text-lg font-extrabold mb-1">Basic information</Text>
+        <Text className="text-secondaryText dark:text-darkMuted mb-5 leading-5">
+          Keep this accurate so employers can identify and contact you.
+        </Text>
+
+        <Input
+          label="Full name"
+          value={formData.full_name}
+          onChangeText={(value) => updateField('full_name', value)}
+          placeholder="e.g. Hilary Ngwa"
+          autoCapitalize="words"
+          textContentType="name"
+          leftIcon={<UserRound size={20} color="#2563EB" />}
+        />
+        <Input
+          label="Phone number"
+          value={formData.phone}
+          onChangeText={(value) => updateField('phone', value)}
+          placeholder="e.g. +237 6XX XXX XXX"
+          keyboardType="phone-pad"
+          textContentType="telephoneNumber"
+          leftIcon={<Phone size={20} color="#2563EB" />}
+        />
+      </View>
 
       {role === 'employer' ? (
         <>
-          <Input label="Company Name" value={formData.company_name} onChangeText={(value) => updateField('company_name', value)} placeholder="Company name" />
-          <Input label="Contact Email" value={formData.contact_email} onChangeText={(value) => updateField('contact_email', value)} placeholder="hiring@company.com" autoCapitalize="none" keyboardType="email-address" />
-          <Input label="Contact Phone" value={formData.contact_phone} onChangeText={(value) => updateField('contact_phone', value)} placeholder="Company phone" keyboardType="phone-pad" />
-          <Input label="Location" value={formData.location} onChangeText={(value) => updateField('location', value)} placeholder="Company location" />
-          <Input label="Industry" value={formData.industry} onChangeText={(value) => updateField('industry', value)} placeholder="e.g. Technology, Finance" />
+          <Input label="Company Name" value={formData.company_name} onChangeText={(value) => updateField('company_name', value)} placeholder="e.g. JobHub Technologies" leftIcon={<Building2 size={20} color="#2563EB" />} />
+          <Input label="Contact Email" value={formData.contact_email} onChangeText={(value) => updateField('contact_email', value)} placeholder="e.g. careers@company.com" autoCapitalize="none" keyboardType="email-address" leftIcon={<Mail size={20} color="#2563EB" />} />
+          <Input label="Contact Phone" value={formData.contact_phone} onChangeText={(value) => updateField('contact_phone', value)} placeholder="e.g. +237 6XX XXX XXX" keyboardType="phone-pad" leftIcon={<Phone size={20} color="#2563EB" />} />
+          <Input label="Location" value={formData.location} onChangeText={(value) => updateField('location', value)} placeholder="e.g. Douala, Cameroon" leftIcon={<MapPin size={20} color="#2563EB" />} />
+          <Input label="Industry" value={formData.industry} onChangeText={(value) => updateField('industry', value)} placeholder="e.g. Technology, finance, healthcare" leftIcon={<BriefcaseBusiness size={20} color="#2563EB" />} />
           <Input
             label="Business Type"
             value={formData.business_type_detail}
             onChangeText={(value) => updateField('business_type_detail', value)}
             placeholder="e.g. Fashion retail, logistics startup, fintech agency"
+            leftIcon={<Building2 size={20} color="#2563EB" />}
           />
-          <Input label="Website" value={formData.website} onChangeText={(value) => updateField('website', value)} placeholder="https://company.com" autoCapitalize="none" keyboardType="url" />
-          <Input label="Company Description" value={formData.description} onChangeText={(value) => updateField('description', value)} placeholder="What does your company do?" multiline numberOfLines={4} textAlignVertical="top" inputClassName="min-h-[120px]" />
+          <Input label="Website" value={formData.website} onChangeText={(value) => updateField('website', value)} placeholder="e.g. https://company.com" autoCapitalize="none" keyboardType="url" leftIcon={<Globe2 size={20} color="#2563EB" />} />
+          <Input label="Company Description" value={formData.description} onChangeText={(value) => updateField('description', value)} placeholder="Briefly describe what your company does and who you hire." multiline numberOfLines={4} textAlignVertical="top" inputClassName="min-h-[120px]" leftIcon={<FileText size={20} color="#2563EB" />} />
         </>
       ) : (
         <>
-          <Input label="Professional Title" value={formData.title} onChangeText={(value) => updateField('title', value)} placeholder="e.g. Product Designer" />
-          <Input label="Location" value={formData.location} onChangeText={(value) => updateField('location', value)} placeholder="City or preferred work location" />
-          <Input label="Skills" value={formData.skills} onChangeText={(value) => updateField('skills', value)} placeholder="React, UX, Writing" />
-          <Input label="Experience" value={formData.experience} onChangeText={(value) => updateField('experience', value)} placeholder="Summarize relevant work experience" multiline numberOfLines={4} textAlignVertical="top" inputClassName="min-h-[120px]" />
-          <Input label="Certificates" value={formData.certificates} onChangeText={(value) => updateField('certificates', value)} placeholder="CPA, HND Accounting, AWS Cloud Practitioner" />
-          <Input label="Qualifications" value={formData.qualifications} onChangeText={(value) => updateField('qualifications', value)} placeholder="Degrees, diplomas, licenses, or training" multiline numberOfLines={3} textAlignVertical="top" inputClassName="min-h-[90px]" />
-          <Input label="Bio" value={formData.bio} onChangeText={(value) => updateField('bio', value)} placeholder="Short profile summary" multiline numberOfLines={4} textAlignVertical="top" inputClassName="min-h-[120px]" />
+          <View className="bg-white/70 dark:bg-darkSurface/70 rounded-[32px] p-4 border border-white dark:border-darkBorder mb-6">
+            <Text className="text-text dark:text-darkText text-lg font-extrabold mb-1">Career profile</Text>
+            <Text className="text-secondaryText dark:text-darkMuted mb-5 leading-5">
+              These fields help employers understand what you do and which jobs fit you.
+            </Text>
+
+            <Input
+              label="Professional title"
+              value={formData.title}
+              onChangeText={(value) => updateField('title', value)}
+              placeholder="e.g. Product Designer, Accountant, Sales Executive"
+              autoCapitalize="words"
+              leftIcon={<BriefcaseBusiness size={20} color="#2563EB" />}
+            />
+            <Input
+              label="Preferred location"
+              value={formData.location}
+              onChangeText={(value) => updateField('location', value)}
+              placeholder="e.g. Douala, Yaounde, Remote"
+              autoCapitalize="words"
+              helperText="Use the city or work mode where you want to receive opportunities."
+              leftIcon={<MapPin size={20} color="#2563EB" />}
+            />
+            <Input
+              label="Top skills"
+              value={formData.skills}
+              onChangeText={(value) => updateField('skills', value)}
+              placeholder="e.g. React Native, customer support, bookkeeping"
+              autoCapitalize="words"
+              helperText="Separate skills with commas. These power your job recommendations."
+              leftIcon={<Sparkles size={20} color="#2563EB" />}
+            />
+            <Input
+              label="Work experience"
+              value={formData.experience}
+              onChangeText={(value) => updateField('experience', value)}
+              placeholder="Summarize your recent roles, responsibilities, tools used, and achievements."
+              multiline
+              numberOfLines={4}
+              textAlignVertical="top"
+              inputClassName="min-h-[120px]"
+              leftIcon={<AlignLeft size={20} color="#2563EB" />}
+            />
+            <Input
+              label="Certificates"
+              value={formData.certificates}
+              onChangeText={(value) => updateField('certificates', value)}
+              placeholder="e.g. HND Accounting, CPA, AWS Cloud Practitioner"
+              autoCapitalize="words"
+              helperText="Separate certificates with commas."
+              leftIcon={<Award size={20} color="#2563EB" />}
+            />
+            <Input
+              label="Qualifications"
+              value={formData.qualifications}
+              onChangeText={(value) => updateField('qualifications', value)}
+              placeholder="List degrees, diplomas, licenses, apprenticeships, or training."
+              multiline
+              numberOfLines={3}
+              textAlignVertical="top"
+              inputClassName="min-h-[100px]"
+              leftIcon={<GraduationCap size={20} color="#2563EB" />}
+            />
+            <Input
+              label="Profile bio"
+              value={formData.bio}
+              onChangeText={(value) => updateField('bio', value)}
+              placeholder="Write a short intro about your strengths, work style, and the roles you are looking for."
+              multiline
+              numberOfLines={4}
+              textAlignVertical="top"
+              inputClassName="min-h-[120px]"
+              leftIcon={<FileText size={20} color="#2563EB" />}
+            />
+          </View>
           <View className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-3xl p-5 mb-6">
             <Text className="text-text dark:text-darkText text-lg font-bold mb-1">CV and Credentials</Text>
             <Text className="text-secondaryText dark:text-darkMuted mb-4">PDFs and images stay private until you choose to share them with an application.</Text>

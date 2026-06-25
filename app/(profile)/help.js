@@ -25,12 +25,15 @@ export default function HelpScreen() {
 
   return (
     <ScrollView className="flex-1 bg-background dark:bg-darkBg">
-      <View className="px-6 pt-12 pb-6">
+      <View className="px-6 pt-20 pb-6">
         <View className="flex-row items-center mb-8">
           <PressableSurface onPress={() => router.back()} className="bg-white dark:bg-darkSurface p-2 rounded-xl border border-gray-100 dark:border-darkBorder mr-4">
             <ChevronLeft size={24} color="#2563EB" />
           </PressableSurface>
-          <Text className="text-text dark:text-darkText text-xl font-bold">Help Center</Text>
+          <View className="flex-1">
+            <Text className="text-secondaryText dark:text-darkMuted text-xs font-bold uppercase tracking-wider">Support</Text>
+            <Text className="text-text dark:text-darkText text-2xl font-extrabold mt-1">Help Center</Text>
+          </View>
         </View>
 
         {loading ? <ActivityIndicator color="#2563EB" className="mt-6" /> : null}

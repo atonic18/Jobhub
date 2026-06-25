@@ -83,15 +83,16 @@ export default function NotificationsScreen() {
         data={notifications}
         keyExtractor={(item) => item.$id}
         ListHeaderComponent={
-          <View className="px-6 pt-12 pb-4">
+          <View className="px-6 pt-20 pb-5">
             <View className="flex-row items-center justify-between mb-5">
               <View className="flex-row items-center flex-1 mr-4">
                 <TouchableOpacity activeOpacity={0.92} onPress={() => router.back()} className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder p-2 rounded-xl mr-4">
                   <ChevronLeft size={24} color="#2563EB" />
                 </TouchableOpacity>
-                <View>
-                  <Text className="text-text dark:text-darkText text-2xl font-bold">Notifications</Text>
-                  <Text className="text-secondaryText dark:text-darkMuted">Updates about jobs and applications.</Text>
+                <View className="flex-1">
+                  <Text className="text-secondaryText dark:text-darkMuted text-xs font-bold uppercase tracking-wider">Activity center</Text>
+                  <Text className="text-text dark:text-darkText text-2xl font-extrabold mt-1">Notifications</Text>
+                  <Text className="text-secondaryText dark:text-darkMuted mt-1">Updates about jobs and applications.</Text>
                 </View>
               </View>
               <TouchableOpacity activeOpacity={0.92} onPress={markAllRead} className="bg-blue-100 dark:bg-darkSurface2 p-3 rounded-2xl">
@@ -130,7 +131,7 @@ export default function NotificationsScreen() {
             </View>
           )
         }
-        contentContainerStyle={{ paddingBottom: 24 }}
+        contentContainerStyle={{ paddingBottom: 110 }}
       />
     </View>
   );
