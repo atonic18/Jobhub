@@ -81,12 +81,15 @@ export default function PrivacyScreen() {
 
   return (
     <ScrollView className="flex-1 bg-background dark:bg-darkBg">
-      <View className="px-6 pt-12 pb-6">
+      <View className="px-6 pt-20 pb-6">
         <View className="flex-row items-center mb-8">
           <TouchableOpacity activeOpacity={0.92} onPress={() => router.back()} className="bg-white dark:bg-darkSurface p-2 rounded-xl border border-gray-100 dark:border-darkBorder mr-4">
             <ChevronLeft size={24} color="#2563EB" />
           </TouchableOpacity>
-          <Text className="text-text dark:text-darkText text-xl font-bold">Privacy & Security</Text>
+          <View className="flex-1">
+            <Text className="text-secondaryText dark:text-darkMuted text-xs font-bold uppercase tracking-wider">Account controls</Text>
+            <Text className="text-text dark:text-darkText text-2xl font-extrabold mt-1">Privacy & Security</Text>
+          </View>
         </View>
         <View className="bg-blue-100 dark:bg-darkSurface2 p-5 rounded-3xl flex-row">
           <Lock size={24} color="#2563EB" />

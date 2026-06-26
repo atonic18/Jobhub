@@ -1,10 +1,23 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl, Alert } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { Briefcase, ChevronRight, Trash2 } from 'lucide-react-native';
+import { Banknote, Briefcase, ChevronRight, MapPin, Trash2 } from 'lucide-react-native';
 import { jobService } from '../../services/jobService';
 import { useAuth } from '../../context/AuthContext';
 import { getApplicationStatusLabel, getCompanyLabel, getSalaryLabel, getUserId } from '../../utils/jobUtils';
+
+const getStatusStyle = (status) => {
+  if (status === 'accepted' || status === 'interview_scheduled') {
+    return { surface: 'bg-emerald-50 dark:bg-emerald-950/30', text: 'text-emerald-700 dark:text-emerald-300' };
+  }
+  if (status === 'rejected' || status === 'declined') {
+    return { surface: 'bg-rose-50 dark:bg-rose-950/30', text: 'text-rose-700 dark:text-rose-300' };
+  }
+  if (status === 'needs_review') {
+    return { surface: 'bg-amber-50 dark:bg-amber-950/30', text: 'text-amber-700 dark:text-amber-300' };
+  }
+  return { surface: 'bg-blue-50 dark:bg-darkSurface2', text: 'text-primary' };
+};
 
 export default function AppliedJobsScreen() {
   const { user } = useAuth();
@@ -78,7 +91,7 @@ export default function AppliedJobsScreen() {
         data={applications}
         keyExtractor={(item) => item.$id}
         ListHeaderComponent={
-          <View className="px-6 pt-12 pb-4">
+          <View className="px-6 pt-20 pb-5">
             <Text className="text-text dark:text-darkText text-2xl font-bold">Applied Jobs</Text>
             <Text className="text-secondaryText dark:text-darkMuted mt-1">Track the roles you have applied for.</Text>
           </View>
@@ -86,11 +99,12 @@ export default function AppliedJobsScreen() {
         renderItem={({ item }) => {
           const job = item.job;
           const isUnavailable = !job || job.is_active === false;
+          const statusStyle = getStatusStyle(item.status);
           return (
             <TouchableOpacity activeOpacity={0.92}
               onPress={() => job && router.push({ pathname: '/(home)/job-details', params: { id: job.$id } })}
               disabled={!job}
-              className="mx-6 mb-4 bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-3xl p-5"
+              className="mx-6 mb-4 bg-white dark:bg-darkSurface border border-slate-100 dark:border-darkBorder rounded-3xl p-5"
             >
               <View className="flex-row items-start">
                 <View className="w-12 h-12 bg-blue-100 dark:bg-darkSurface2 rounded-2xl items-center justify-center mr-4">
@@ -99,20 +113,31 @@ export default function AppliedJobsScreen() {
                 <View className="flex-1">
                   <View className="flex-row justify-between items-start">
                     <View className="flex-1 mr-3">
-                      <Text className="text-text dark:text-darkText text-lg font-bold">{job?.title || 'Unavailable job'}</Text>
-                      <Text className="text-secondaryText dark:text-darkMuted">
+                      <Text className="text-text dark:text-darkText text-lg font-bold" numberOfLines={2}>{job?.title || 'Unavailable job'}</Text>
+                      <Text className="text-secondaryText dark:text-darkMuted text-sm mt-1" numberOfLines={1}>
                         {isUnavailable ? 'This posting is no longer available.' : getCompanyLabel(job)}
                       </Text>
                     </View>
-                    {!isUnavailable ? <ChevronRight size={20} color="#64748B" /> : null}
+                    {!isUnavailable ? <ChevronRight size={20} color="#94A3B8" /> : null}
                   </View>
                   {!isUnavailable && (
-                    <Text className="text-secondaryText dark:text-darkMuted mt-3">{job.location || 'Remote'} - {getSalaryLabel(job)}</Text>
+                    <View className="bg-slate-50 dark:bg-darkSurface2 rounded-2xl px-3 py-3 mt-4">
+                      <View className="flex-row items-center mb-2">
+                        <MapPin size={14} color="#64748B" />
+                        <Text className="text-secondaryText dark:text-darkMuted text-sm ml-2 flex-1" numberOfLines={1}>{job.location || 'Remote'}</Text>
+                      </View>
+                      <View className="flex-row items-center">
+                        <Banknote size={14} color="#64748B" />
+                        <Text className="text-secondaryText dark:text-darkMuted text-sm ml-2 flex-1" numberOfLines={1}>{getSalaryLabel(job)}</Text>
+                      </View>
+                    </View>
                   )}
                   <View className="flex-row items-center justify-between mt-4">
-                    <View className="self-start bg-blue-100 dark:bg-darkSurface2 px-3 py-1 rounded-full">
-                      <Text className="text-primary text-xs font-bold">{getApplicationStatusLabel(item.status)}</Text>
-                    </View>
+                    <View className={`self-start px-3 py-1.5 rounded-full ${isUnavailable ? 'bg-slate-100 dark:bg-darkSurface2' : statusStyle.surface}`}>
+                      <Text className={`text-xs font-bold ${isUnavailable ? 'text-secondaryText dark:text-darkMuted' : statusStyle.text}`}>
+                        {isUnavailable ? 'Posting unavailable' : getApplicationStatusLabel(item.status)}
+                      </Text>
+                     </View>
                     {isUnavailable ? (
                       <TouchableOpacity activeOpacity={0.92}
                         onPress={() => removeUnavailableApplication(item)}
@@ -142,7 +167,7 @@ export default function AppliedJobsScreen() {
             </TouchableOpacity>
           </View>
         }
-        contentContainerStyle={{ paddingBottom: 24 }}
+        contentContainerStyle={{ paddingBottom: 110 }}
       />
     </View>
   );

@@ -309,7 +309,12 @@ export default function PostJob() {
       className="flex-1 bg-background dark:bg-darkBg"
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <ScrollView className="flex-1 bg-background dark:bg-darkBg px-6 pt-12 pb-10" keyboardShouldPersistTaps="handled">
+      <ScrollView
+        className="flex-1 bg-background dark:bg-darkBg px-6 pt-20"
+        contentContainerStyle={{ paddingBottom: 112 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
         <View className="flex-row items-center mb-8">
           <TouchableOpacity activeOpacity={0.92}
             onPress={() => router.back()}
@@ -317,8 +322,15 @@ export default function PostJob() {
           >
             <ChevronLeft size={24} color="#2563EB" />
           </TouchableOpacity>
-          <Text className="text-text dark:text-darkText text-xl font-bold">{isEditing ? 'Edit Job' : 'Post a Job'}</Text>
+          <View className="flex-1">
+            <Text className="text-secondaryText dark:text-darkMuted text-xs font-bold uppercase tracking-wider">Employer workspace</Text>
+            <Text className="text-text dark:text-darkText text-2xl font-extrabold mt-1">{isEditing ? 'Edit Job' : 'Post a Job'}</Text>
+          </View>
         </View>
+
+        <View className="bg-white/70 dark:bg-darkSurface/70 rounded-[32px] p-4 border border-white dark:border-darkBorder mb-6">
+          <Text className="text-text dark:text-darkText text-lg font-extrabold mb-1">Role basics</Text>
+          <Text className="text-secondaryText dark:text-darkMuted mb-5 leading-5">Start with the details candidates scan first.</Text>
 
         <Input
           label="Job Title"
@@ -333,14 +345,13 @@ export default function PostJob() {
           onChangeText={(text) => updateField('location', text)}
         />
 
-        <View className="flex-row">
+        <View>
           <Input
             label="Min Salary (XAF)"
             placeholder="e.g. 80000"
             value={formData.salary_min}
             onChangeText={(text) => updateField('salary_min', text)}
             keyboardType="numeric"
-            className="flex-1 mr-2"
           />
           <Input
             label="Max Salary (XAF)"
@@ -348,7 +359,6 @@ export default function PostJob() {
             value={formData.salary_max}
             onChangeText={(text) => updateField('salary_max', text)}
             keyboardType="numeric"
-            className="flex-1 ml-2"
           />
         </View>
 
@@ -359,6 +369,11 @@ export default function PostJob() {
           onChangeText={(text) => updateField('participants_needed', text.replace(/[^0-9]/g, ''))}
           keyboardType="numeric"
         />
+        </View>
+
+        <View className="bg-white/70 dark:bg-darkSurface/70 rounded-[32px] p-4 border border-white dark:border-darkBorder mb-6">
+        <Text className="text-text dark:text-darkText text-lg font-extrabold mb-1">Work setup</Text>
+        <Text className="text-secondaryText dark:text-darkMuted mb-5 leading-5">Choose how candidates will work and what type of role this is.</Text>
 
         <Text className="text-text dark:text-darkText font-semibold mb-2 ml-1">Work Mode</Text>
         <View className="flex-row flex-wrap mb-6">
@@ -373,10 +388,15 @@ export default function PostJob() {
             <OptionChip key={type} label={type} selected={formData.job_type === type} onPress={() => selectOption('job_type', type)} />
           ))}
         </View>
+        </View>
+
+        <View className="bg-white/70 dark:bg-darkSurface/70 rounded-[32px] p-4 border border-white dark:border-darkBorder mb-6">
+        <Text className="text-text dark:text-darkText text-lg font-extrabold mb-1">Candidate requirements</Text>
+        <Text className="text-secondaryText dark:text-darkMuted mb-5 leading-5">Add the context and screening details that help applicants self-select.</Text>
 
         <Input
           label="Description"
-          placeholder="Job description..."
+          placeholder="Describe the role, daily tasks, team, and expected outcomes."
           value={formData.description}
           onChangeText={(text) => updateField('description', text)}
           multiline
@@ -396,16 +416,17 @@ export default function PostJob() {
         />
         <Input
           label="Required Skills"
-          placeholder="React, Accounting, Sales"
+          placeholder="e.g. React, accounting, sales, customer support"
           value={formData.required_skills}
           onChangeText={(text) => updateField('required_skills', text)}
         />
         <Input
           label="Required Documents"
-          placeholder="CV, Certificate, ID card"
+          placeholder="e.g. CV, certificate, ID card"
           value={formData.required_documents}
           onChangeText={(text) => updateField('required_documents', text)}
         />
+        </View>
 
         <View className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-3xl p-5 mb-6 shadow-sm">
           <Text className="text-text dark:text-darkText text-lg font-bold mb-3">Interview Options</Text>

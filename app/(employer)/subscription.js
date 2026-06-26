@@ -8,7 +8,7 @@ export default function Subscription() {
   const router = useRouter();
 
   return (
-    <View className="flex-1 bg-background dark:bg-darkBg px-6 pt-12">
+    <View className="flex-1 bg-background dark:bg-darkBg px-6 pt-20">
       <View className="flex-row items-center mb-8">
         <TouchableOpacity activeOpacity={0.92}
           onPress={() => router.back()}
@@ -16,7 +16,10 @@ export default function Subscription() {
         >
           <ChevronLeft size={24} color="#0F172A" />
         </TouchableOpacity>
-        <Text className="text-text dark:text-darkText text-xl font-bold">Plans Removed</Text>
+        <View className="flex-1">
+          <Text className="text-secondaryText dark:text-darkMuted text-xs font-bold uppercase tracking-wider">Access</Text>
+          <Text className="text-text dark:text-darkText text-2xl font-extrabold mt-1">Plans Removed</Text>
+        </View>
       </View>
 
       <View className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-3xl p-6">

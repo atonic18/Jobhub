@@ -172,14 +172,19 @@ export default function EmployerJobDetails() {
 
   return (
     <ScrollView
-      className="flex-1 bg-background dark:bg-darkBg px-6 pt-12"
+      className="flex-1 bg-background dark:bg-darkBg px-6 pt-20"
+      contentContainerStyle={{ paddingBottom: 112 }}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#2563EB" colors={['#2563EB']} />}
+      showsVerticalScrollIndicator={false}
     >
       <View className="flex-row items-center mb-8">
         <TouchableOpacity activeOpacity={0.92} onPress={() => router.back()} className="bg-white dark:bg-darkSurface p-2 rounded-xl border border-gray-100 dark:border-darkBorder mr-4">
           <ChevronLeft size={24} color="#2563EB" />
         </TouchableOpacity>
-        <Text className="text-text dark:text-darkText text-xl font-bold flex-1">Job Details</Text>
+        <View className="flex-1">
+          <Text className="text-secondaryText dark:text-darkMuted text-xs font-bold uppercase tracking-wider">Employer role</Text>
+          <Text className="text-text dark:text-darkText text-2xl font-extrabold mt-1">Job Details</Text>
+        </View>
       </View>
 
       <View className="bg-white dark:bg-darkSurface p-6 rounded-3xl border border-gray-100 dark:border-darkBorder mb-5">

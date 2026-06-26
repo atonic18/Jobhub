@@ -165,7 +165,7 @@ export default function ChatScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       className="flex-1 bg-background dark:bg-darkBg"
     >
-      <View className="px-6 pt-12 pb-4 bg-white dark:bg-darkSurface border-b border-gray-100 dark:border-darkBorder flex-row items-center">
+      <View className="px-6 pt-20 pb-4 bg-white dark:bg-darkSurface border-b border-gray-100 dark:border-darkBorder flex-row items-center">
         <TouchableOpacity activeOpacity={0.92} onPress={() => router.back()} className="mr-4">
           <ChevronLeft size={24} color="#2563EB" />
         </TouchableOpacity>
@@ -191,7 +191,7 @@ export default function ChatScreen() {
           data={messages.filter(isValidMessage)}
           keyExtractor={(item) => item.$id}
           className="flex-1 px-6 pt-4"
-          contentContainerStyle={{ paddingBottom: 20 }}
+          contentContainerStyle={{ paddingBottom: 32 }}
           renderItem={({ item }) => {
             const isMe = item.sender_id === userId;
             return (
@@ -228,7 +228,7 @@ export default function ChatScreen() {
         />
       )}
 
-      <View className="mx-4 mb-4">
+      <View className="mx-4 mb-6">
         {attachment ? (
           <View className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-darkBorder rounded-2xl p-3 mb-2 flex-row items-center">
             <FileText size={18} color="#2563EB" />

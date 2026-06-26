@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
+import { LockKeyhole, Mail, ShieldCheck } from 'lucide-react-native';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { Logo } from '../../components/ui/Logo';
@@ -12,6 +13,9 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { login, forgotPassword } = useAuth();
+  const { width, height } = useWindowDimensions();
+  const isCompact = height < 720;
+  const formWidth = Math.min(width - 48, 430);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -51,22 +55,47 @@ export default function Login() {
   };
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="bg-background dark:bg-darkBg px-6 pt-20">
-      <View className="items-center mb-8">
-        <Logo size={80} />
-      </View>
-      <View className="mb-10">
-        <Text className="text-text dark:text-darkText text-4xl font-bold mb-2">Welcome Back!</Text>
-        <Text className="text-secondaryText dark:text-darkMuted text-lg">Sign in to continue searching for your dream job.</Text>
-      </View>
+    <KeyboardAvoidingView
+      className="flex-1 bg-background dark:bg-darkBg"
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+    <ScrollView
+      contentContainerStyle={{
+        flexGrow: 1,
+        justifyContent: isCompact ? 'flex-start' : 'center',
+        paddingTop: isCompact ? 42 : 64,
+        paddingBottom: 32,
+      }}
+      className="bg-background dark:bg-darkBg px-6"
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={{ width: formWidth, alignSelf: 'center' }}>
+        <View className="items-center mb-7">
+          <Logo size={isCompact ? 68 : 78} />
+        </View>
+        <View className="mb-7">
+          <View className="self-start flex-row items-center bg-blue-50 dark:bg-blue-500/10 px-3 py-2 rounded-full mb-4">
+            <ShieldCheck size={16} color="#2563EB" />
+            <Text className="text-primary font-bold text-xs ml-2">Secure sign in</Text>
+          </View>
+          <Text className="text-text dark:text-darkText text-4xl font-extrabold mb-3">Welcome back</Text>
+          <Text className="text-secondaryText dark:text-darkMuted text-base leading-6">
+            Continue to your JobHub dashboard and keep moving on the roles that fit you.
+          </Text>
+        </View>
 
-      <View>
+      <View className="bg-white/70 dark:bg-darkSurface/70 rounded-[32px] p-4 border border-white dark:border-darkBorder">
         <Input
-          label="Email Address"
-          placeholder="Enter your email"
+          label="Email address"
+          placeholder="name@example.com"
           value={email}
           onChangeText={setEmail}
+          keyboardType="email-address"
           autoCapitalize="none"
+          autoCorrect={false}
+          textContentType="emailAddress"
+          leftIcon={<Mail size={20} color="#2563EB" />}
         />
         <Input
           label="Password"
@@ -74,10 +103,12 @@ export default function Login() {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
+          textContentType="password"
+          leftIcon={<LockKeyhole size={20} color="#2563EB" />}
         />
 
         <TouchableOpacity activeOpacity={0.92}
-          className="items-end mb-8"
+          className="items-end mb-6"
           onPress={handleForgotPassword}
           disabled={loading}
         >
@@ -85,20 +116,30 @@ export default function Login() {
         </TouchableOpacity>
 
         <Button
-          title="Login"
+          title="Sign in"
           onPress={handleLogin}
           loading={loading}
           className="mb-6"
         />
 
-        <View className="flex-row justify-center">
-          <Text className="text-secondaryText dark:text-darkMuted">Don't have an account? </Text>
+        <Button
+          title="Open Admin Dashboard"
+          variant="outline"
+          onPress={() => router.push('/(admin)/dashboard')}
+          disabled={loading}
+          className="mb-6"
+        />
+
+        <View className="flex-row justify-center flex-wrap px-2">
+          <Text className="text-secondaryText dark:text-darkMuted">New to JobHub? </Text>
           <TouchableOpacity activeOpacity={0.92} onPress={() => router.push('/(auth)/register')}>
-            <Text className="text-primary font-bold">Register</Text>
+            <Text className="text-primary font-bold">Create account</Text>
           </TouchableOpacity>
         </View>
       </View>
+      </View>
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 

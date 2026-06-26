@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, TextInput, RefreshControl } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { MessageSquare, Search, X } from 'lucide-react-native';
+import { ChevronRight, MessageSquare, Search, X } from 'lucide-react-native';
 import { chatService } from '../../services/chatService';
 import { profileService } from '../../services/profileService';
 import { ProfileAvatar } from '../ui/ProfileAvatar';
@@ -76,10 +76,13 @@ export default function ChatListScreen() {
 
   return (
     <View className="flex-1 bg-background dark:bg-darkBg">
-      <View className="px-6 pt-12 pb-5 bg-white dark:bg-darkSurface border-b border-gray-100 dark:border-darkBorder">
-        <Text className="text-text dark:text-darkText text-2xl font-bold mb-5">Messages</Text>
-        <View className="flex-row items-center bg-gray-100 dark:bg-darkSurface2 rounded-3xl px-4">
-          <Search size={20} color="#64748B" />
+      <View className="px-6 pt-20 pb-5 bg-background dark:bg-darkBg">
+        <Text className="text-text dark:text-darkText text-2xl font-bold">Messages</Text>
+        <Text className="text-secondaryText dark:text-darkMuted mt-1 mb-5">Keep track of your job conversations.</Text>
+        <View className="flex-row items-center bg-white dark:bg-darkSurface border border-slate-100 dark:border-darkBorder rounded-3xl p-1.5 shadow-sm">
+          <View className="w-11 h-11 rounded-2xl bg-blue-50 dark:bg-darkSurface2 items-center justify-center">
+            <Search size={20} color="#2563EB" />
+          </View>
           <TextInput
             value={query}
             onChangeText={setQuery}
@@ -88,7 +91,7 @@ export default function ChatListScreen() {
             className="flex-1 px-3 py-3 text-text dark:text-darkText"
           />
           {query ? (
-            <TouchableOpacity activeOpacity={0.92} onPress={() => setQuery('')} className="p-1">
+            <TouchableOpacity activeOpacity={0.88} onPress={() => setQuery('')} className="p-2 mr-1">
               <X size={18} color="#64748B" />
             </TouchableOpacity>
           ) : null}
@@ -112,13 +115,13 @@ export default function ChatListScreen() {
             return (
               <TouchableOpacity activeOpacity={0.92}
                 onPress={() => router.push(`/(chat)/${item.$id}`)}
-                className="flex-row items-center p-6 bg-white dark:bg-darkSurface border-b border-gray-50 dark:border-darkBorder"
+                className="flex-row items-center mx-6 mb-3 p-4 bg-white dark:bg-darkSurface border border-slate-100 dark:border-darkBorder rounded-3xl"
               >
-                <ProfileAvatar uri={participantProfile?.profile_pic_url} name={participantName} size={56} textSize={20} className="mr-4" />
+                <ProfileAvatar uri={participantProfile?.profile_pic_url} name={participantName} size={52} textSize={19} className="mr-3" />
                 <View className="flex-1">
-                  <View className="flex-row justify-between items-center mb-1">
+                  <View className="flex-row justify-between items-center mb-1.5">
                     <Text className="text-text dark:text-darkText font-bold text-lg" numberOfLines={1}>{participantName}</Text>
-                    <Text className="text-secondaryText dark:text-darkMuted text-xs">
+                    <Text className="text-secondaryText dark:text-darkMuted text-xs ml-2" numberOfLines={1}>
                       {formatTimestamp(item.$updatedAt)}
                     </Text>
                   </View>
@@ -126,6 +129,7 @@ export default function ChatListScreen() {
                     {participantSubtitle}
                   </Text>
                 </View>
+                <ChevronRight size={18} color="#94A3B8" />
               </TouchableOpacity>
             );
           }}
@@ -140,6 +144,7 @@ export default function ChatListScreen() {
               </Text>
             </View>
           }
+          contentContainerStyle={{ paddingTop: 12, paddingBottom: 110 }}
         />
       )}
     </View>

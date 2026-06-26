@@ -43,10 +43,11 @@ export default function Settings() {
   );
 
   return (
-    <ScrollView className="flex-1 bg-background dark:bg-darkBg">
-      <View className="px-6 pt-16 pb-10 bg-white dark:bg-darkSurface items-center border-b border-gray-100 dark:border-darkBorder">
+    <ScrollView className="flex-1 bg-background dark:bg-darkBg" contentContainerStyle={{ paddingBottom: 110 }}>
+      <View className="px-6 pt-20 pb-10 bg-white dark:bg-darkSurface items-center border-b border-gray-100 dark:border-darkBorder">
+        <Text className="text-secondaryText dark:text-darkMuted text-xs font-bold uppercase tracking-wider mb-5">Account</Text>
         <ProfileAvatar uri={user?.profile_pic_url} name={fullName} size={96} textSize={36} className="mb-4" />
-        <Text className="text-text dark:text-darkText text-2xl font-bold mb-1">{fullName}</Text>
+        <Text className="text-text dark:text-darkText text-2xl font-extrabold mb-1 text-center">{fullName}</Text>
         <Text className="text-secondaryText dark:text-darkMuted font-medium">{user?.email}</Text>
         <View className="bg-blue-100 dark:bg-darkSurface2 px-3 py-1 rounded-full mt-3">
           <Text className="text-primary text-xs font-bold">{getRoleLabel(role)}</Text>

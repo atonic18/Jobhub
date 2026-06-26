@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
-import { Camera, CircleHelp, LogOut } from 'lucide-react-native';
+import { BriefcaseBusiness, Building2, Camera, CircleHelp, FileText, Globe2, LogOut, Mail, MapPin, Phone, UserRound } from 'lucide-react-native';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { ProfileAvatar } from '../../components/ui/ProfileAvatar';
@@ -202,11 +202,17 @@ export default function EmployerProfile() {
       className="flex-1 bg-background dark:bg-darkBg"
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <ScrollView className="flex-1 px-6 pt-12" keyboardShouldPersistTaps="handled">
+      <ScrollView
+        className="flex-1 px-6 pt-20"
+        contentContainerStyle={{ paddingBottom: 112 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
         <View className="flex-row justify-between items-center mb-8">
           <View className="flex-1 mr-4">
-            <Text className="text-text dark:text-darkText text-2xl font-bold">Company Profile</Text>
-            <Text className="text-secondaryText dark:text-darkMuted mt-1">Keep employer information current for applicants.</Text>
+            <Text className="text-secondaryText dark:text-darkMuted text-sm font-bold uppercase tracking-wider">Employer account</Text>
+            <Text className="text-text dark:text-darkText text-3xl font-extrabold mt-1">Company Profile</Text>
+            <Text className="text-secondaryText dark:text-darkMuted mt-2 leading-5">Keep company details clear so applicants know who they are applying to.</Text>
           </View>
           <TouchableOpacity activeOpacity={0.92} onPress={handleLogout} className="bg-red-50 p-3 rounded-2xl">
             <LogOut size={22} color="#EF4444" />
@@ -238,32 +244,106 @@ export default function EmployerProfile() {
           </TouchableOpacity>
         </View>
 
-        <Input label="Your Name" value={formData.full_name} onChangeText={(value) => updateField('full_name', value)} placeholder="Your full name" />
-        <Input label="Your Phone" value={formData.phone} onChangeText={(value) => updateField('phone', value)} placeholder="Your phone number" keyboardType="phone-pad" />
-        <Input label="Company Name" value={formData.company_name} onChangeText={(value) => updateField('company_name', value)} placeholder="Company name" />
-        <Input label="Contact Email" value={formData.contact_email} onChangeText={(value) => updateField('contact_email', value)} placeholder="hiring@company.com" keyboardType="email-address" autoCapitalize="none" />
-        <Input label="Contact Phone" value={formData.contact_phone} onChangeText={(value) => updateField('contact_phone', value)} placeholder="Company phone" keyboardType="phone-pad" />
-        <Input label="Location" value={formData.location} onChangeText={(value) => updateField('location', value)} placeholder="Company location" />
-        <Input label="Industry" value={formData.industry} onChangeText={(value) => updateField('industry', value)} placeholder="Technology, Finance, Healthcare" />
+        <View className="bg-white/70 dark:bg-darkSurface/70 rounded-[32px] p-4 border border-white dark:border-darkBorder mb-6">
+          <Text className="text-text dark:text-darkText text-lg font-extrabold mb-1">Public company details</Text>
+          <Text className="text-secondaryText dark:text-darkMuted mb-5 leading-5">These details appear on job posts and candidate conversations.</Text>
+
         <Input
-          label="Business Type"
+          label="Your name"
+          value={formData.full_name}
+          onChangeText={(value) => updateField('full_name', value)}
+          placeholder="e.g. Hilary Ngwa"
+          autoCapitalize="words"
+          textContentType="name"
+          leftIcon={<UserRound size={20} color="#2563EB" />}
+        />
+        <Input
+          label="Personal phone"
+          value={formData.phone}
+          onChangeText={(value) => updateField('phone', value)}
+          placeholder="e.g. +237 6XX XXX XXX"
+          keyboardType="phone-pad"
+          textContentType="telephoneNumber"
+          helperText="Used for account contact. Applicants will see the company contact phone below."
+          leftIcon={<Phone size={20} color="#2563EB" />}
+        />
+        <Input
+          label="Company name"
+          value={formData.company_name}
+          onChangeText={(value) => updateField('company_name', value)}
+          placeholder="e.g. JobHub Technologies"
+          autoCapitalize="words"
+          leftIcon={<Building2 size={20} color="#2563EB" />}
+        />
+        <Input
+          label="Hiring email"
+          value={formData.contact_email}
+          onChangeText={(value) => updateField('contact_email', value)}
+          placeholder="e.g. careers@company.com"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoCorrect={false}
+          textContentType="emailAddress"
+          leftIcon={<Mail size={20} color="#2563EB" />}
+        />
+        <Input
+          label="Hiring phone"
+          value={formData.contact_phone}
+          onChangeText={(value) => updateField('contact_phone', value)}
+          placeholder="e.g. +237 6XX XXX XXX"
+          keyboardType="phone-pad"
+          textContentType="telephoneNumber"
+          leftIcon={<Phone size={20} color="#2563EB" />}
+        />
+        <Input
+          label="Company location"
+          value={formData.location}
+          onChangeText={(value) => updateField('location', value)}
+          placeholder="e.g. Douala, Cameroon"
+          autoCapitalize="words"
+          leftIcon={<MapPin size={20} color="#2563EB" />}
+        />
+        <Input
+          label="Industry"
+          value={formData.industry}
+          onChangeText={(value) => updateField('industry', value)}
+          placeholder="e.g. Technology, finance, healthcare"
+          autoCapitalize="words"
+          leftIcon={<BriefcaseBusiness size={20} color="#2563EB" />}
+        />
+        <Input
+          label="Business type"
           value={formData.business_type_detail}
           onChangeText={(value) => updateField('business_type_detail', value)}
-          placeholder="e.g. Fashion retail, logistics startup, fintech agency"
+          placeholder="e.g. Logistics startup, fashion retail, fintech agency"
+          autoCapitalize="sentences"
+          leftIcon={<Building2 size={20} color="#2563EB" />}
         />
-        <Input label="Website" value={formData.website} onChangeText={(value) => updateField('website', value)} placeholder="https://company.com" keyboardType="url" autoCapitalize="none" />
         <Input
-          label="Company Description"
+          label="Website"
+          value={formData.website}
+          onChangeText={(value) => updateField('website', value)}
+          placeholder="e.g. https://company.com"
+          keyboardType="url"
+          autoCapitalize="none"
+          autoCorrect={false}
+          textContentType="URL"
+          leftIcon={<Globe2 size={20} color="#2563EB" />}
+        />
+        <Input
+          label="Company description"
           value={formData.description}
           onChangeText={(value) => updateField('description', value)}
-          placeholder="Tell applicants about the company"
+          placeholder="Briefly describe what your company does, your culture, and the kind of candidates you hire."
           multiline
           numberOfLines={4}
           textAlignVertical="top"
           inputClassName="min-h-[120px]"
+          leftIcon={<FileText size={20} color="#2563EB" />}
         />
+        </View>
 
-        <Button title="Save Company Profile" onPress={handleSave} loading={saving} className="mt-4 mb-10" />
+        <Button title="Save Company Profile" onPress={handleSave} loading={saving} className="mt-2 mb-10" />
       </ScrollView>
     </KeyboardAvoidingView>
   );

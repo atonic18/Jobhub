@@ -19,10 +19,11 @@ export default function AdminDashboard() {
   );
 
   return (
-    <ScrollView className="flex-1 bg-background dark:bg-darkBg px-6 pt-16">
+    <ScrollView className="flex-1 bg-background dark:bg-darkBg px-6 pt-20" contentContainerStyle={{ paddingBottom: 48 }}>
       <View className="mb-8">
-        <Text className="text-secondaryText dark:text-darkMuted text-lg">System Admin</Text>
-        <Text className="text-text dark:text-darkText text-3xl font-bold">{user?.full_name}</Text>
+        <Text className="text-secondaryText dark:text-darkMuted text-xs font-bold uppercase tracking-wider">System Admin</Text>
+        <Text className="text-text dark:text-darkText text-3xl font-extrabold mt-1">{user?.full_name || 'Administrator'}</Text>
+        <Text className="text-secondaryText dark:text-darkMuted mt-2">Monitor platform activity and admin actions.</Text>
       </View>
 
       <View className="mb-10">

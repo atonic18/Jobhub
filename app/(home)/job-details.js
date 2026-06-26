@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Modal, TextInput, Linking } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Modal, TextInput, Linking, KeyboardAvoidingView, Platform } from 'react-native';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Banknote, Bookmark, BookmarkCheck, Calendar, ChevronLeft, FileText, MapPin, Briefcase, Paperclip, X } from 'lucide-react-native';
 import { Button } from '../../components/ui/Button';
@@ -204,7 +204,7 @@ export default function JobDetails() {
 
   return (
     <View className="flex-1 bg-background dark:bg-darkBg">
-      <View className="px-6 pt-12 flex-row items-center justify-between mb-6">
+      <View className="px-6 pt-20 flex-row items-center justify-between mb-6">
         <View className="flex-row items-center">
           <TouchableOpacity activeOpacity={0.92}
             onPress={() => router.back()}
@@ -212,7 +212,10 @@ export default function JobDetails() {
           >
             <ChevronLeft size={24} color="#2563EB" />
           </TouchableOpacity>
-          <Text className="text-text dark:text-darkText text-xl font-bold">Job Details</Text>
+          <View>
+            <Text className="text-secondaryText dark:text-darkMuted text-xs font-bold uppercase tracking-wider">Role overview</Text>
+            <Text className="text-text dark:text-darkText text-2xl font-extrabold mt-1">Job Details</Text>
+          </View>
         </View>
         <TouchableOpacity activeOpacity={0.92}
           onPress={handleSave}
@@ -223,7 +226,7 @@ export default function JobDetails() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView className="px-6" showsVerticalScrollIndicator={false}>
+      <ScrollView className="px-6" contentContainerStyle={{ paddingBottom: 110 }} showsVerticalScrollIndicator={false}>
         <View className="items-center mb-8">
           <View className="w-20 h-20 bg-blue-100 dark:bg-darkSurface2 rounded-3xl items-center justify-center mb-4">
             <Briefcase size={40} color="#2563EB" />
@@ -235,18 +238,18 @@ export default function JobDetails() {
           </View>
         </View>
 
-        <View className="flex-row justify-between mb-8">
+        <View className="mb-8">
           <View className="bg-white dark:bg-darkSurface p-4 rounded-2xl flex-1 mr-2 items-center border border-gray-50 dark:border-darkBorder shadow-sm">
             <Banknote size={20} color="#2563EB" />
             <Text className="text-secondaryText dark:text-darkMuted text-xs mt-1">Salary</Text>
             <Text className="text-text dark:text-darkText font-bold text-sm text-center">{getSalaryLabel(job)}</Text>
           </View>
-          <View className="bg-white dark:bg-darkSurface p-4 rounded-2xl flex-1 mx-2 items-center border border-gray-50 dark:border-darkBorder shadow-sm">
+          <View className="bg-white dark:bg-darkSurface p-4 rounded-2xl items-center border border-gray-50 dark:border-darkBorder shadow-sm mt-3">
             <MapPin size={20} color="#2563EB" />
             <Text className="text-secondaryText dark:text-darkMuted text-xs mt-1">Location</Text>
             <Text className="text-text dark:text-darkText font-bold text-sm text-center">{job.location || 'Remote'}</Text>
           </View>
-          <View className="bg-white dark:bg-darkSurface p-4 rounded-2xl flex-1 ml-2 items-center border border-gray-50 dark:border-darkBorder shadow-sm">
+          <View className="bg-white dark:bg-darkSurface p-4 rounded-2xl items-center border border-gray-50 dark:border-darkBorder shadow-sm mt-3">
             <Calendar size={20} color="#2563EB" />
             <Text className="text-secondaryText dark:text-darkMuted text-xs mt-1">Type</Text>
             <Text className="text-text dark:text-darkText font-bold text-sm text-center">{job.job_type || 'Open'}</Text>
@@ -334,15 +337,16 @@ export default function JobDetails() {
       </View>
 
       <Modal visible={applyVisible} transparent animationType="slide" onRequestClose={() => setApplyVisible(false)}>
-        <View className="flex-1 justify-end bg-black/40">
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 justify-end bg-black/40">
           <TouchableOpacity className="flex-1" activeOpacity={1} onPress={() => setApplyVisible(false)} />
-          <View className="bg-white dark:bg-darkSurface rounded-t-3xl px-6 pt-6 pb-10">
+          <View className="bg-white dark:bg-darkSurface rounded-t-3xl px-6 pt-6 pb-10 max-h-[88%]">
             <View className="flex-row items-center justify-between mb-5">
               <Text className="text-text dark:text-darkText text-xl font-bold">Apply for Job</Text>
               <TouchableOpacity activeOpacity={0.92} onPress={() => setApplyVisible(false)} className="p-2">
                 <X size={22} color="#64748B" />
               </TouchableOpacity>
             </View>
+            <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
 
             {requiredDocuments.length > 0 ? (
               <View className="mb-4">
@@ -408,8 +412,9 @@ export default function JobDetails() {
               loading={applying}
               className="mt-4"
             />
+            </ScrollView>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );

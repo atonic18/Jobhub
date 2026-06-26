@@ -163,6 +163,39 @@ export const profileService = {
     };
   },
 
+  getTopJobSeekers: async (limit = 8) => {
+    const response = await databases.listDocuments(DATABASE_ID, SEEKER_PROFILE_COLLECTION, [
+      Query.limit(limit),
+    ]);
+
+    const visibleProfiles = response.documents.filter((profile) => profile.show_profile_to_employers !== false);
+    const enriched = await Promise.allSettled(
+      visibleProfiles.map(async (profile) => {
+        const userDoc = await profileService.getUserDoc(profile.user_id).catch(() => null);
+        const skills = Array.isArray(profile.skills) ? profile.skills.filter(Boolean) : [];
+
+        return {
+          ...profile,
+          full_name: compactText(userDoc?.full_name) || 'Job seeker',
+          profile_pic_url: compactText(userDoc?.profile_pic_url),
+          title: compactText(profile.title) || 'Open to opportunities',
+          location: compactText(profile.location) || 'Location flexible',
+          skills,
+          experience: compactText(profile.experience),
+        };
+      })
+    );
+
+    return enriched
+      .filter((result) => result.status === 'fulfilled')
+      .map((result) => result.value)
+      .sort((a, b) => {
+        const skillDelta = (b.skills?.length || 0) - (a.skills?.length || 0);
+        if (skillDelta !== 0) return skillDelta;
+        return new Date(b.$updatedAt || b.$createdAt || 0) - new Date(a.$updatedAt || a.$createdAt || 0);
+      });
+  },
+
   // Get/Update employer profile
   getEmployerProfile: async (userId) => {
     const profile = await databases.listDocuments(DATABASE_ID, 'employer_profiles', [

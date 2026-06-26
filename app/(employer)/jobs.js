@@ -65,12 +65,13 @@ export default function EmployerJobs() {
 
   return (
     <View className="flex-1 bg-background dark:bg-darkBg">
-      <View className="px-6 pt-12 pb-5">
+      <View className="px-6 pt-20 pb-5">
         <View className="flex-row justify-between items-start mb-5">
           <View className="flex-1 mr-4">
-            <Text className="text-text dark:text-darkText text-2xl font-bold">Jobs Posted</Text>
-            <Text className="text-secondaryText dark:text-darkMuted mt-1">
-              {activeCount} active {activeCount === 1 ? 'job' : 'jobs'} posted.
+            <Text className="text-secondaryText dark:text-darkMuted text-sm font-bold uppercase tracking-wider">Employer workspace</Text>
+            <Text className="text-text dark:text-darkText text-3xl font-extrabold mt-1">Jobs Posted</Text>
+            <Text className="text-secondaryText dark:text-darkMuted mt-2 leading-5">
+              Manage your posted roles, update open positions, and track applicant progress. {activeCount} active {activeCount === 1 ? 'job' : 'jobs'} posted.
             </Text>
           </View>
           <View className="flex-row">
@@ -152,7 +153,7 @@ export default function EmployerJobs() {
               <Text className="text-secondaryText dark:text-darkMuted text-center mt-2">Post a job to start receiving applicants.</Text>
             </View>
           }
-          contentContainerStyle={{ paddingBottom: 24 }}
+          contentContainerStyle={{ paddingBottom: 110 }}
         />
       )}
     </View>
