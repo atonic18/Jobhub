@@ -122,13 +122,6 @@ export default function Login() {
           className="mb-6"
         />
 
-        <Button
-          title="Open Admin Dashboard"
-          variant="outline"
-          onPress={() => router.push('/(admin)/dashboard')}
-          disabled={loading}
-          className="mb-6"
-        />
 
         <View className="flex-row justify-center flex-wrap px-2">
           <Text className="text-secondaryText dark:text-darkMuted">New to JobHub? </Text>
